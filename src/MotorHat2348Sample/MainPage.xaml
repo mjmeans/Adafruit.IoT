@@ -1,0 +1,16 @@
+﻿<Page
+    x:Class="MotorHat2348Sample.MainPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:MotorHat2348Sample"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+
+    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+        <Button x:Name="button" Content="Run stepper" HorizontalAlignment="Left" Margin="154,177,0,0" Height="120" Width="120" VerticalAlignment="Top" Click="button_Click"/>
+        <Button x:Name="button1" Content="Close program" HorizontalAlignment="Left" Margin="394,177,0,0" Height="120" Width="120" VerticalAlignment="Top" Click="button1_Click"/>
+        <TextBlock x:Name="textBlock" HorizontalAlignment="Left" Margin="154,366,0,0" TextWrapping="Wrap" Text="TextBlock" VerticalAlignment="Top" Width="202"/>
+
+    </Grid>
+</Page>

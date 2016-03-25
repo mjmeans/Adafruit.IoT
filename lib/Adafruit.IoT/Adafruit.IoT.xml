@@ -1,0 +1,488 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<doc>
+    <assembly>
+        <name>Adafruit.IoT</name>
+    </assembly>
+    <members>
+        <member name="T:Adafruit.IoT.Motors.PwmDCMotor">
+            <summary>
+            Represents a DC Motor connected to a PWM controller.
+            </summary>
+            <remarks>
+            This class implements the <see cref="M:Adafruit.IoT.Motors.PwmDCMotor.SetSpeed(System.Double)" /> method to set the PWM duty cycle range of 0.0 to 1.0 which adjusts the power and therefore the motor speed rather than an RPM speed.
+            </remarks>
+        </member>
+        <member name="M:Adafruit.IoT.Motors.PwmDCMotor.#ctor(Windows.Devices.Pwm.PwmController,System.Byte)">
+            <summary>
+            Initializes a new <see cref="T:Adafruit.IoT.Motors.PwmDCMotor" /> instance.
+            </summary>
+            <param name="controller">The <see cref="T:Windows.Devices.Pwm.PwmController" /> to use.</param>
+            <param name="driver">The motor driver channel (1 through 4) for coil A.</param>
+        </member>
+        <member name="M:Adafruit.IoT.Motors.PwmDCMotor.Run(Adafruit.IoT.Motors.Direction)">
+            <summary>
+            Runs the motor in the specified direction.
+            </summary>
+            <param name="command">A <see cref="T:Adafruit.IoT.Motors.Direction" />.</param>
+            <remarks>
+            This method uses the previously value set using <see cref="M:Adafruit.IoT.Motors.PwmDCMotor.SetSpeed(System.Double)" /> to modulate the PWM power going to the motor.
+            In order to change the speed of a running motor you must call this method again after calling <see cref="M:Adafruit.IoT.Motors.PwmDCMotor.SetSpeed(System.Double)" />.
+            </remarks>
+        </member>
+        <member name="M:Adafruit.IoT.Motors.PwmDCMotor.SetSpeed(System.Double)">
+            <summary>
+            Set the desired motor's speed in revolutions per minute.
+            </summary>
+            <param name="rpm">The duty cycle of the PWM controller in the range of 0.0 to 1.0.</param>
+            <remarks>
+            <note type="note">
+            Although this method has a parameter called rpm, this parameter actually sets the duty cycle of the PWM controller that powers the motor.
+            </note>
+            <remarks>
+            This method sets the value used to modulate the PWM power going to the motor.
+            In order to change the speed of a running motor you must call this method and then call <see cref="M:Adafruit.IoT.Motors.PwmDCMotor.Run(Adafruit.IoT.Motors.Direction)" /> again.
+            </remarks>
+            </remarks>
+        </member>
+        <member name="M:Adafruit.IoT.Motors.PwmDCMotor.Dispose(System.Boolean)">
+            <inheritdoc />
+        </member>
+        <member name="M:Adafruit.IoT.Motors.PwmDCMotor.Dispose">
+            <inheritdoc />
+        </member>
+        <member name="T:Adafruit.IoT.Motors.Direction">
+            <summary>
+            Specifies the motor direction.
+            </summary>
+            <remarks>
+            The forward and reverse direction typically refers to clockwise and counter clockwise motor rotation.
+            But individual implementations and motor wiring can alter this so that it means, for example, a 
+            forward direction of the robot's wheels. So the precise meaning of forward and backward is implementation
+            dependent.
+            </remarks>
+        </member>
+        <member name="F:Adafruit.IoT.Motors.Direction.Forward">
+            <summary>
+            Motor will turn in the forward direction.
+            </summary>
+        </member>
+        <member name="F:Adafruit.IoT.Motors.Direction.Backward">
+            <summary>
+            Motor will turn in the backward direction.
+            </summary>
+        </member>
+        <member name="T:Adafruit.IoT.Motors.IMotor">
+            <summary>
+            Defines common methods used by all motors. 
+            </summary>
+            <remarks>
+            The purpose of this interface is to share generic motor control methods between type and strongly-type motor control types.
+            </remarks>
+        </member>
+        <member name="M:Adafruit.IoT.Motors.IMotor.SetSpeed(System.Double)">
+            <summary>
+            Sets the speed of the motor.
+            </summary>
+            <param name="rpm">The desired revolutions per minute speed of the motor.</param>
+            <remarks>
+            The desired speed of the motor is used to calculate the delays between steps for a stepper motor or the duty cycle of the power supplied to a DC motor.
+            </remarks>
+        </member>
+        <member name="T:Adafruit.IoT.Motors.PwmStepperMotor">
+            <summary>
+            Represents a stepper motor connected to a PWM controller.
+            </summary>
+            <remarks>
+            This class supports <see cref="T:Adafruit.IoT.Motors.SteppingStyle" /> settings
+            <see cref="F:Adafruit.IoT.Motors.SteppingStyle.Full" />, <see cref="F:Adafruit.IoT.Motors.SteppingStyle.Half" />,
+            <see cref="F:Adafruit.IoT.Motors.SteppingStyle.Wave" /> and <see cref="F:Adafruit.IoT.Motors.SteppingStyle.Microstep8" />.
+            </remarks>
+        </member>
+        <member name="M:Adafruit.IoT.Motors.PwmStepperMotor.#ctor(Windows.Devices.Pwm.PwmController,System.Byte,System.Byte,System.Byte)">
+            <summary>
+            Initializes a new <see cref="T:Adafruit.IoT.Motors.PwmStepperMotor" /> instance.
+            </summary>
+            <param name="controller">The <see cref="T:Windows.Devices.Pwm.PwmController" /> to use.</param>
+            <param name="driverA">The motor driver channel (1 through 4) for coil A.</param>
+            <param name="driverB">The motor driver channel (1 through 4) for coil B.</param>
+            <param name="steps">The number of full steps per revolution that this motor has.</param>
+        </member>
+        <member name="M:Adafruit.IoT.Motors.PwmStepperMotor.SetSpeed(System.Double)">
+            <summary>
+            Set the desired motor's speed in revolutions per minute.
+            </summary>
+            <param name="rpm">The revolutions per minute.</param>
+            <remarks>
+            This setting applies to multiple motor steps processed by the <see cref="M:Adafruit.IoT.Motors.PwmStepperMotor.StepAsync(System.Int32,Adafruit.IoT.Motors.Direction,Adafruit.IoT.Motors.SteppingStyle)" /> method.
+            </remarks>
+        </member>
+        <member name="M:Adafruit.IoT.Motors.PwmStepperMotor.OneStep(Adafruit.IoT.Motors.Direction,Adafruit.IoT.Motors.SteppingStyle)">
+            <summary>
+            Steps the motor one step in the direction and style specified.
+            </summary>
+            <param name="direction">A <see cref="T:Adafruit.IoT.Motors.Direction" />.</param>
+            <param name="stepStyle">A <see cref="T:Adafruit.IoT.Motors.SteppingStyle" />.</param>
+            <returns>The current step number.</returns>
+            <remarks>
+            .
+            </remarks>
+        </member>
+        <member name="M:Adafruit.IoT.Motors.PwmStepperMotor.StepAsync(System.Int32,Adafruit.IoT.Motors.Direction,Adafruit.IoT.Motors.SteppingStyle)">
+            <summary>
+            Steps a specified number of steps, direction and stepping style.
+            </summary>
+            <param name="steps">The number of steps to process.</param>
+            <param name="direction">A <see cref="T:Adafruit.IoT.Motors.Direction" />.</param>
+            <param name="stepStyle">A <see cref="T:Adafruit.IoT.Motors.SteppingStyle" />.</param>
+            <remarks>
+            .
+            </remarks>
+        </member>
+        <member name="M:Adafruit.IoT.Motors.PwmStepperMotor.StepAsyncInternal(System.Int32,Adafruit.IoT.Motors.Direction,Adafruit.IoT.Motors.SteppingStyle)">
+            <summary>
+            Async method to step the motor multiple steps.
+            </summary>
+            <param name="steps">The number of steps to step the motor.</param>
+            <param name="direction">A <see cref="T:Adafruit.IoT.Motors.Direction" />.</param>
+            <param name="stepStyle">A <see cref="T:Adafruit.IoT.Motors.SteppingStyle" />.</param>
+            <returns>The current step number.</returns>
+            <remarks>
+            The speed at which the steps will occur will be at the best effort to achieve the desired <see cref="M:Adafruit.IoT.Motors.PwmStepperMotor.SetSpeed(System.Double)" /> speed.
+            </remarks>
+        </member>
+        <member name="P:Adafruit.IoT.Motors.PwmStepperMotor.PowerFactor">
+            <summary>
+            Gets or sets the power level of this stepper motor.
+            </summary>
+            <value>
+            A power scaling factor from 0.0 to 1.0.
+            </value>
+            <remarks>
+            A changing in power factor will be applied to subsequent motor steps.
+            </remarks>
+        </member>
+        <member name="M:Adafruit.IoT.Motors.PwmStepperMotor.Dispose(System.Boolean)">
+            <inheritdoc />
+        </member>
+        <member name="M:Adafruit.IoT.Motors.PwmStepperMotor.Dispose">
+            <inheritdoc />
+        </member>
+        <member name="T:Adafruit.IoT.Motors.SteppingStyle">
+            <summary>
+            Specifies the stepper motor stepping style.
+            </summary>
+            <remarks>
+            <para><see cref="F:Adafruit.IoT.Motors.SteppingStyle.Full" />
+            is sometimes called DOUBLE stepping; referring to two motor windings being energized (powered) at a time.
+            It is the highest power usage and torque setting.
+            This is the same as the odd numbered half steps.
+            </para>
+            <para><see cref="F:Adafruit.IoT.Motors.SteppingStyle.Wave" />
+            is sometimes called SINGLE stepping; referring to one motor winding being energized (powered) at a time.
+            It is the lowest power usage and torque.
+            This is the same as the even numbered half steps.
+            </para>
+            <para><see cref="F:Adafruit.IoT.Motors.SteppingStyle.Half" />
+            is sometimes called INTERLEAVE stepping; referring to alternating between <see cref="F:Adafruit.IoT.Motors.SteppingStyle.Full" /> and <see cref="F:Adafruit.IoT.Motors.SteppingStyle.Wave" /> steps.
+            It alternates between higher power/torque and lower power/torque steps.
+            </para>
+            <para><see cref="F:Adafruit.IoT.Motors.SteppingStyle.Microstep8" />
+            is sometimes called 8-step MICROSTEP stepping.
+            This style changes the current energizing a pair of windings using a sine-cosine power curve so that there are 8 steps per <see cref="F:Adafruit.IoT.Motors.SteppingStyle.Full" /> step.
+            The motor torque is on average higher than <see cref="F:Adafruit.IoT.Motors.SteppingStyle.Wave" /> or <see cref="F:Adafruit.IoT.Motors.SteppingStyle.Half" /> stepping, but lower than <see cref="F:Adafruit.IoT.Motors.SteppingStyle.Full" /> stepping.
+            </para>
+            </remarks>
+        </member>
+        <member name="F:Adafruit.IoT.Motors.SteppingStyle.Full">
+            <summary>
+            Motor will perform 4 full steps per step cycle.
+            </summary>
+        </member>
+        <member name="F:Adafruit.IoT.Motors.SteppingStyle.Wave">
+            <summary>
+            Motor will perform 4 wave steps per step cycle.
+            </summary>
+        </member>
+        <member name="F:Adafruit.IoT.Motors.SteppingStyle.Half">
+            <summary>
+            Motor will perform 8 half steps per step cycle.
+            </summary>
+        </member>
+        <member name="F:Adafruit.IoT.Motors.SteppingStyle.Microstep8">
+            <summary>
+            Motor will perform 8 sine-cosine micro steps per full step, or 32 micro steps per step cycle.
+            </summary>
+        </member>
+        <member name="T:Adafruit.IoT.Devices.MotorHat2348">
+             <summary>
+             Driver class for the Adafruit DC &amp; Stepper Motor HAT for Raspberry Pi.
+             </summary>
+             <remarks>
+             <para>See the Adafruit DC &amp; Stepper Motor HAT for Raspberry Pi – Mini Kit
+             <see href="https://www.adafruit.com/products/2348">here</see>
+             </para><para>To use this class:
+             <code>
+            using Adafruit.IoT.Devices;
+            using Adafruit.IoT.Motors;
+            using System;
+            using System.Threading.Tasks;
+            using Windows.Devices.Pwm;
+            
+            namespace Adafruit.IoT
+            {
+                internal class Examples
+                {
+                    public async void Example1()
+                    {
+                        MotorHat2348 mh = null;
+                        PwmStepperMotor stepper = null;
+                        PwmPin pwm = null;
+            
+                        if (mh == null)
+                        {
+                            // Create a driver object for the HAT at address 0x60
+                            mh = new MotorHat2348(0x60);
+                            // Create a stepper motor object at the specified ports and steps per rev
+                            stepper = mh.CreateStepperMotor(1, 2, 200);
+                            // Create a PwmPin object at one of the auxiliary PWMs on the HAT
+                            pwm = mh.CreatePwm(1);
+                        }
+            
+                        // step 200 full steps in the forward direction using half stepping (so 400 steps total) at 30 rpm
+                        stepper.SetSpeed(30);
+                        await stepper.StepAsync(200, Direction.Forward, SteppingStyle.Half);
+            
+                        // Activate the pin and set it to 50% duty cycle
+                        pwm.Start();
+                        pwm.SetActiveDutyCyclePercentage(0.5);
+            
+                        // for demonstration purposes we will wait 10 seconds to observe the PWM and motor operation.
+                        await Task.Delay(10000);
+            
+                        // Stop the auxiliary PWM pin
+                        pwm.Stop();
+            
+                        // Dispose of the MotorHat and free all its resources
+                        mh.Dispose();
+                    }
+                }
+             }
+             </code></para>
+             </remarks>
+        </member>
+        <member name="M:Adafruit.IoT.Devices.MotorHat2348.#ctor(System.Byte,System.Double)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Adafruit.IoT.Devices.MotorHat2348" /> class with the specified I2C address and PWM frequency.
+            </summary>
+            <param name="i2cAddrress">The I2C address of the MotorHat's PWM controller.</param>
+            <param name="frequency">The frequency in Hz to set the PWM controller.</param>
+            <remarks>
+            The default i2c address is 0x60, but the HAT can be configured in hardware to any address from 0x60 to 0x7f.
+            The PWM hardware used by this HAT is a PCA9685. It has a total possible frequency range of 24 to 1526 Hz.
+            Setting the frequency above or below this range will cause PWM hardware to be set at its maximum or minimum setting.
+            </remarks>
+        </member>
+        <member name="M:Adafruit.IoT.Devices.MotorHat2348.#ctor(System.Byte)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Adafruit.IoT.Devices.MotorHat2348" /> class with the specified I2C address and default PWM frequency.
+            </summary>
+            <param name="i2cAddrress">The I2C address of the MotorHat's PWM controller.</param>
+            <remarks>
+            The <see cref="T:Adafruit.IoT.Devices.MotorHat2348" /> will be created with the default frequency of 1600 Hz.
+            </remarks>
+        </member>
+        <member name="M:Adafruit.IoT.Devices.MotorHat2348.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:Adafruit.IoT.Devices.MotorHat2348" /> class with the default I2C address and PWM frequency.
+            </summary>
+            <remarks>
+            The <see cref="T:Adafruit.IoT.Devices.MotorHat2348" /> will be created with the default I2C address of 0x60 and PWM frequency of 1600 Hz.
+            </remarks>
+        </member>
+        <member name="M:Adafruit.IoT.Devices.MotorHat2348.CreateDCMotor(System.Byte)">
+            <summary>
+            Creates a <see cref="T:Adafruit.IoT.Motors.PwmDCMotor" />  object for the specified channel and adds it to the list of Motors.
+            </summary>
+            <param name="driverChannel">A motor driver channel from 1 to 4.</param>
+            <returns>The created DCMotor object.</returns>
+            <remarks>
+            The driverChannel parameter refers to the motor driver channels M1, M2, M3 or M4.
+            </remarks>
+        </member>
+        <member name="M:Adafruit.IoT.Devices.MotorHat2348.CreateStepperMotor(System.Byte,System.Byte,System.Byte)">
+            <summary>
+            Creates a <see cref="T:Adafruit.IoT.Motors.PwmStepperMotor" /> object for the specified channels and adds it to the list of Motors.
+            </summary>
+            <param name="driverChannelA">A motor driver channel from 1 to 4.</param>
+            <param name="driverChannelB">A motor driver channel from 1 to 4.</param>
+            <param name="steps">The number of full steps per revolution that this motor has.</param>
+            <returns>The created <see cref="T:Adafruit.IoT.Motors.PwmStepperMotor" /> object.</returns>
+            <remarks>
+            The driverChannelA and driverChannelB parameters must be different and must be channels not already assigned to other 
+            <see cref="T:Adafruit.IoT.Motors.PwmDCMotor" /> or <see cref="T:Adafruit.IoT.Motors.PwmStepperMotor" /> objects for this <see cref="T:Adafruit.IoT.Devices.MotorHat2348" />.
+            </remarks>
+        </member>
+        <member name="M:Adafruit.IoT.Devices.MotorHat2348.CreatePwm(System.Byte)">
+            <summary>
+            Creates a <see cref="T:Windows.Devices.Pwm.PwmPin" /> for the specified channel.
+            </summary>
+            <param name="channel">The PWM channel number.</param>
+            <returns>The created <see cref="T:Windows.Devices.Pwm.PwmPin" /> for the specified channel.</returns>
+            <remarks>Channel numbers 1 through 4 correspond to the auxiliary PCA9685 channels 0, 1, 14 and 15.</remarks>
+        </member>
+        <member name="P:Adafruit.IoT.Devices.MotorHat2348.Motors">
+            <summary>
+            Gets all motors created to this <see cref="T:Adafruit.IoT.Devices.MotorHat2348" />.
+            </summary>
+            <value>
+            A list of <see cref="T:Adafruit.IoT.Motors.IMotor" /> objects.
+            </value>
+            <remarks>
+            The method returns a list of values that represent the <see cref="T:Adafruit.IoT.Motors.IMotor" /> objects created on this <see cref="T:Adafruit.IoT.Devices.MotorHat2348" />.
+            </remarks>
+        </member>
+        <member name="P:Adafruit.IoT.Devices.MotorHat2348.PwmPins">
+            <summary>
+            Gets all auxiliary PWM pins created to this <see cref="T:Adafruit.IoT.Devices.MotorHat2348" />.
+            </summary>
+            <value>
+            A list of <see cref="P:Adafruit.IoT.Devices.MotorHat2348.PwmPins" /> objects.
+            </value>
+            <remarks>
+            The method returns a list of values that represent the <see cref="P:Adafruit.IoT.Devices.MotorHat2348.PwmPins" /> objects created on this <see cref="T:Adafruit.IoT.Devices.MotorHat2348" />.
+            </remarks>
+        </member>
+        <member name="M:Adafruit.IoT.Devices.MotorHat2348.Dispose(System.Boolean)">
+            <inheritdoc />
+        </member>
+        <member name="M:Adafruit.IoT.Devices.MotorHat2348.Dispose">
+            <inheritdoc />
+        </member>
+        <member name="T:Adafruit.IoT.Devices.Pwm.PCA9685Provider">
+            <summary>
+            Driver for the PCA9685 used on the <see href="http://www.adafruit.com/products/815">
+            Adafruit 16-Channel 12-bit PWM/Servo Driver</see> and others.
+            </summary>
+            <remarks>
+            <para>
+            Create an instance of this class and pass it to the
+            <see cref="M:Windows.Devices.Pwm.PwmController.GetControllersAsync(Windows.Devices.Pwm.Provider.IPwmProvider)">GetControllersAsync</see> 
+            method of the <see cref="T:Windows.Devices.Pwm.PwmController" /> class. Then use the returned 
+            controller collection to set the PWM parameters.
+            </para>
+            <para>
+            Example:
+            <code>
+            // Create a provider at the default I2C1 address 0x40.
+            var pca9685 = new PCA9685();
+            
+            // Get any controllers that can use this provider.
+            var controllers = PwmController.GetControllersAsync(pca9685);
+            
+            // Get the first controller.
+            var controller = controllers[0];
+            
+            // Open the PWM pin number 0. Pins cannot be opened for shared access.
+            using (var pin = controller.OpenPin(0))
+            {
+                // Start the PWM
+                pin.Start();
+                
+                // Set it's duty cycle
+                pin.SetActiveDutyCyclePercentage(0.5);
+                
+                // ... do some timing to allow it to stabilize or whatever
+            
+                // Stop the pin
+                pin.Stop();
+                
+            }   // end using will release the pin, turn it off, and make it available by another operation
+            </code>
+            </para>
+            <para>
+            This class is adapted from the original C++ ms-iot sample 
+            <see href="https://github.com/ms-iot/BusProviders/tree/develop/PWM/PwmPCA9685">here</see>.
+            And SimulatedProvider code <see href="https://github.com/ms-iot/BusProviders/blob/develop/SimulatedProvider/SimulatedProvider/PwmControllerProvider.cs">here</see>/&gt;
+            </para>
+            </remarks>
+        </member>
+        <member name="P:Adafruit.IoT.Devices.Pwm.PCA9685Provider.Address">
+            <summary>
+            Gets or sets the I2C address of the controller.
+            </summary>
+            <value>
+            The I2C address of the controller. The default is 0x40.
+            </value>
+        </member>
+        <member name="P:Adafruit.IoT.Devices.Pwm.PCA9685Provider.ControllerName">
+            <summary>
+            Gets or sets the name of the I2C controller to use.
+            </summary>
+            <value>
+            The name of the I2C controller to use. The default is "I2C1".
+            </value>
+        </member>
+        <member name="M:Adafruit.IoT.Devices.Pwm.PCA9685Provider.#ctor">
+            <summary>
+            Create a new <see cref="T:Adafruit.IoT.Devices.Pwm.PCA9685Provider" /> instance for the default I2C controller (I2C1) at the default I2C address (0x40).
+            </summary>
+        </member>
+        <member name="M:Adafruit.IoT.Devices.Pwm.PCA9685Provider.#ctor(System.Int32)">
+            <summary>
+            Create a new <see cref="T:Adafruit.IoT.Devices.Pwm.PCA9685Provider" /> instance for the default I2C controller (I2C1) at the specified I2C address.
+            </summary>
+            <param name="address">The I2C address.</param>
+        </member>
+        <member name="M:Adafruit.IoT.Devices.Pwm.PCA9685Provider.#ctor(System.String,System.Int32)">
+            <summary>
+            Create a new <see cref="T:Adafruit.IoT.Devices.Pwm.PCA9685Provider" /> instance for the specified I2C controller and I2C address.
+            </summary>
+            <param name="controllerName">The I2C controller name.</param>
+            <param name="address">The I2C address.</param>
+        </member>
+        <member name="M:Adafruit.IoT.Devices.Pwm.PCA9685Provider.GetControllers">
+            <inheritdoc />
+        </member>
+        <member name="M:Adafruit.IoT.Devices.Pwm.PCA9685Provider.System#IDisposable#Dispose">
+            <inheritdoc />
+        </member>
+        <member name="T:Adafruit.IoT.Devices.Pwm.PCA9685Controller">
+            <summary>
+            Internal driver for the PCA9685 used on the <see href="http://www.adafruit.com/products/815">
+            Adafruit 16-Channel 12-bit PWM/Servo Driver</see> and others.
+            </summary>
+            <remarks>
+            <para>
+            This class is not designed to be access by user code. It is accessed
+            by the <see cref="T:Windows.Devices.Pwm.PwmController" /> and <see cref="T:Windows.Devices.Pwm.PwmPin" /> classes.
+            </para>
+            <para>
+            This class is adapted from the original C++ ms-iot sample 
+            <see href="https://github.com/ms-iot/BusProviders/tree/develop/PWM/PwmPCA9685">here</see>.
+            And SimulatedProvider code <see href="https://github.com/ms-iot/BusProviders/blob/develop/SimulatedProvider/SimulatedProvider/PwmControllerProvider.cs">here</see>/&gt;
+            </para>
+            </remarks>
+        </member>
+        <member name="T:Adafruit.IoT.Devices.Pwm.PCA9685Controller.Registers">
+            <summary>
+            PCA9685 register addresses
+            </summary>
+        </member>
+        <member name="T:Adafruit.IoT.Devices.Pwm.PCA9685Controller.Mode1Flags">
+            <summary>
+            PCA9685 mode 1 register flags
+            </summary>
+        </member>
+        <member name="T:Adafruit.IoT.Devices.Pwm.PCA9685Controller.Mode2Flags">
+            <summary>
+            PCA9685 mode 2 register flags
+            </summary>
+        </member>
+        <member name="M:Adafruit.IoT.Devices.Pwm.PCA9685Controller.Windows#Devices#Pwm#Provider#IPwmControllerProvider#SetPulseParameters(System.Int32,System.Double,System.Boolean)">
+            <inheritdoc />
+        </member>
+        <member name="M:Adafruit.IoT.Devices.Pwm.PCA9685Controller.Dispose">
+            <inheritdoc />
+        </member>
+    </members>
+</doc>

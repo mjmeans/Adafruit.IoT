@@ -1,0 +1,8 @@
+﻿<Application
+    x:Class="MotorHat2348Sample.App"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:MotorHat2348Sample"
+    RequestedTheme="Light">
+
+</Application>

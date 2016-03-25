@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<topic id="f5033eb9-76f4-4567-921e-7d84815c826d" revisionNumber="1">
+	<developerConceptualDocument xmlns="http://ddue.schemas.microsoft.com/authoring/2003/5" xmlns:xlink="http://www.w3.org/1999/xlink">
+		<introduction>
+			<para>API documentation for Adafruit.IoT</para>
+		</introduction>
+
+		<section>
+			<title>Getting Started</title>
+			<content>
+				<para>This section provides MSDN-style documentation of the Adafruit.IoT library. 
+        Use the navigation tree to the left to explore namespaces and types included in the library 
+        or return to <externalLink>
+          <linkText>documentation home</linkText>
+          <linkUri>../../</linkUri>
+        </externalLink> to learn more about getting
+        started with the library.
+      </para>
+			</content>
+		</section>
+
+		<relatedTopics>
+			<link xlink:href="7e4af686-8c97-40c6-a035-af6a5c86781f" />
+		</relatedTopics>
+	</developerConceptualDocument>
+</topic>

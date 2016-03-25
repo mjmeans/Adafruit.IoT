@@ -1,0 +1,57 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<HelpTOC>
+
+  <HelpTOCNode Title="Welcome to Adafruit.Iot" Url="html/f5033eb9-76f4-4567-921e-7d84815c826d.htm" />
+  <HelpTOCNode Id="4c172355-1901-44a8-baff-5bf6c0ea046d" Title="Version History" Url="html/7e4af686-8c97-40c6-a035-af6a5c86781f.htm">
+    <HelpTOCNode Title="Version 1.0.0.0" Url="html/F79FE839-895C-4677-8C7E-9C2F3E34FFA2.htm" />
+    <HelpTOCNode Title="Version 1.0.1.0" Url="html/3e34f284-8503-42aa-bf0c-8a4b1e949800.htm" />
+    <HelpTOCNode Title="Version 1.0.2.0" Url="html/d0ebb40f-c718-4ac8-8672-4e9f6154263f.htm" />
+    <HelpTOCNode Title="Version 1.0.3.0" Url="html/a6bd6618-b6e0-466d-b831-b0aac942730c.htm" />
+  </HelpTOCNode>
+  <HelpTOCNode Id="e8bdb8b6-ac6b-4922-a5ca-9f53fb605fe5" Title="Adafruit.IoT.Devices" Url="html/N_Adafruit_IoT_Devices.htm">
+    <HelpTOCNode Id="7fca663c-cce5-4426-acfe-691f6347c6b3" Title="MotorHat2348 Class" Url="html/T_Adafruit_IoT_Devices_MotorHat2348.htm">
+      <HelpTOCNode Id="153cd9fe-f3ef-4717-9391-ef168404ec03" Title="MotorHat2348 Constructor " Url="html/Overload_Adafruit_IoT_Devices_MotorHat2348__ctor.htm">
+        <HelpTOCNode Title="MotorHat2348 Constructor " Url="html/M_Adafruit_IoT_Devices_MotorHat2348__ctor.htm" />
+        <HelpTOCNode Title="MotorHat2348 Constructor (Byte)" Url="html/M_Adafruit_IoT_Devices_MotorHat2348__ctor_1.htm" />
+        <HelpTOCNode Title="MotorHat2348 Constructor (Byte, Double)" Url="html/M_Adafruit_IoT_Devices_MotorHat2348__ctor_2.htm" />
+      </HelpTOCNode>
+      <HelpTOCNode Id="7110222b-be97-4b6e-b47c-8f45a852bae1" Title="MotorHat2348 Properties" Url="html/Properties_T_Adafruit_IoT_Devices_MotorHat2348.htm">
+        <HelpTOCNode Title="Motors Property " Url="html/P_Adafruit_IoT_Devices_MotorHat2348_Motors.htm" />
+        <HelpTOCNode Title="PwmPins Property " Url="html/P_Adafruit_IoT_Devices_MotorHat2348_PwmPins.htm" />
+      </HelpTOCNode>
+      <HelpTOCNode Id="03e60c8d-c84f-4afb-a680-23e7f0cd9f58" Title="MotorHat2348 Methods" Url="html/Methods_T_Adafruit_IoT_Devices_MotorHat2348.htm">
+        <HelpTOCNode Title="Close Method " Url="html/M_Adafruit_IoT_Devices_MotorHat2348_Close.htm" />
+        <HelpTOCNode Title="CreateDCMotor Method " Url="html/M_Adafruit_IoT_Devices_MotorHat2348_CreateDCMotor.htm" />
+        <HelpTOCNode Title="CreatePwm Method " Url="html/M_Adafruit_IoT_Devices_MotorHat2348_CreatePwm.htm" />
+        <HelpTOCNode Title="CreateStepperMotor Method " Url="html/M_Adafruit_IoT_Devices_MotorHat2348_CreateStepperMotor.htm" />
+      </HelpTOCNode>
+    </HelpTOCNode>
+  </HelpTOCNode>
+  <HelpTOCNode Id="544baedf-24c9-46d1-8499-569e3b2297b2" Title="Adafruit.IoT.Motors" Url="html/N_Adafruit_IoT_Motors.htm">
+    <HelpTOCNode Title="Direction Enumeration" Url="html/T_Adafruit_IoT_Motors_Direction.htm" />
+    <HelpTOCNode Id="2cbc887d-d634-49b9-8edc-fc2204531ae1" Title="IMotor Interface" Url="html/T_Adafruit_IoT_Motors_IMotor.htm">
+      <HelpTOCNode Id="fedfe588-5986-479a-bba2-bc2994a6f314" Title="IMotor Methods" Url="html/Methods_T_Adafruit_IoT_Motors_IMotor.htm">
+        <HelpTOCNode Title="SetSpeed Method " Url="html/M_Adafruit_IoT_Motors_IMotor_SetSpeed.htm" />
+      </HelpTOCNode>
+    </HelpTOCNode>
+    <HelpTOCNode Id="54b9363e-8e5c-445e-841c-bdac35b630ff" Title="PwmDCMotor Class" Url="html/T_Adafruit_IoT_Motors_PwmDCMotor.htm">
+      <HelpTOCNode Id="051ebdc2-996a-41f6-9f14-60cd331ff71e" Title="PwmDCMotor Methods" Url="html/Methods_T_Adafruit_IoT_Motors_PwmDCMotor.htm">
+        <HelpTOCNode Title="Close Method " Url="html/M_Adafruit_IoT_Motors_PwmDCMotor_Close.htm" />
+        <HelpTOCNode Title="Run Method " Url="html/M_Adafruit_IoT_Motors_PwmDCMotor_Run.htm" />
+        <HelpTOCNode Title="SetSpeed Method " Url="html/M_Adafruit_IoT_Motors_PwmDCMotor_SetSpeed.htm" />
+      </HelpTOCNode>
+    </HelpTOCNode>
+    <HelpTOCNode Id="1f12c5de-a613-41d5-8203-1a0539980be0" Title="PwmStepperMotor Class" Url="html/T_Adafruit_IoT_Motors_PwmStepperMotor.htm">
+      <HelpTOCNode Id="fc048311-3ada-4f5c-af56-32f7b02fff1f" Title="PwmStepperMotor Properties" Url="html/Properties_T_Adafruit_IoT_Motors_PwmStepperMotor.htm">
+        <HelpTOCNode Title="PowerFactor Property " Url="html/P_Adafruit_IoT_Motors_PwmStepperMotor_PowerFactor.htm" />
+      </HelpTOCNode>
+      <HelpTOCNode Id="e537cbec-f4eb-4ffc-a799-dd7cf1c44f37" Title="PwmStepperMotor Methods" Url="html/Methods_T_Adafruit_IoT_Motors_PwmStepperMotor.htm">
+        <HelpTOCNode Title="Close Method " Url="html/M_Adafruit_IoT_Motors_PwmStepperMotor_Close.htm" />
+        <HelpTOCNode Title="OneStep Method " Url="html/M_Adafruit_IoT_Motors_PwmStepperMotor_OneStep.htm" />
+        <HelpTOCNode Title="SetSpeed Method " Url="html/M_Adafruit_IoT_Motors_PwmStepperMotor_SetSpeed.htm" />
+        <HelpTOCNode Title="StepAsync Method " Url="html/M_Adafruit_IoT_Motors_PwmStepperMotor_StepAsync.htm" />
+      </HelpTOCNode>
+    </HelpTOCNode>
+    <HelpTOCNode Title="SteppingStyle Enumeration" Url="html/T_Adafruit_IoT_Motors_SteppingStyle.htm" />
+  </HelpTOCNode>
+</HelpTOC>
