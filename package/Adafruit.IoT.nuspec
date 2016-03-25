@@ -1,0 +1,24 @@
+﻿<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>Microsoft.IoT.Devices</id>
+    <version>1.0.3</version>
+    <title>Adafruit Devices for Windows IoT Core</title>
+    <authors>mjmeans</authors>
+    <owners>mjmeans</owners>
+    <licenseUrl>https://raw.githubusercontent.com/mjmeans/Adafruit.IoT/master/License/LICENSE.txt</licenseUrl>
+    <projectUrl>https://github.com/mjmeans/Adafruit.IoT</projectUrl>
+    <iconUrl>http://go.microsoft.com/fwlink/?LinkID=288890</iconUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <summary>Makes it easy to use Adafruit Stepper Motor HAT #2348 for Raspberry Pi 2/3 on the Windows IoT Core platform.</summary>
+    <description>Makes it easy to use Adafruit Stepper Motor HAT #2348 for Raspberry Pi 2/3 on the Windows IoT Core platform.</description>
+    <releaseNotes></releaseNotes>
+    <copyright>Copyright © Microsoft Corporation</copyright>
+    <tags>raspberry-pi adafruit devices hardware microsoft windows iot iot-core</tags>
+    <dependencies>
+    </dependencies>
+  </metadata>
+  <files>
+    <file src="Builds\Adafruit.IoT\**\*.*" target="" />
+  </files>
+</package>
