@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0"?>
 <package >
   <metadata>
-    <id>Microsoft.IoT.Devices</id>
+    <id>Adafruit.IoT</id>
     <version>1.0.3</version>
     <title>Adafruit Devices for Windows IoT Core</title>
     <authors>mjmeans</authors>
