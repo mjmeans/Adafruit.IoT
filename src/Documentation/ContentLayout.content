@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Topics>
-  <Topic id="f5033eb9-76f4-4567-921e-7d84815c826d" visible="True" isDefault="true" title="Welcome to Adafruit.Iot">
+  <Topic id="f5033eb9-76f4-4567-921e-7d84815c826d" visible="True" isDefault="true" isSelected="true" title="Welcome to Adafruit.IoT">
     <HelpKeywords>
       <HelpKeyword index="K" term="Welcome" />
     </HelpKeywords>
@@ -12,6 +12,6 @@
     <Topic id="F79FE839-895C-4677-8C7E-9C2F3E34FFA2" visible="True" title="Version 1.0.0.0" />
     <Topic id="3e34f284-8503-42aa-bf0c-8a4b1e949800" visible="True" title="Version 1.0.1.0" />
     <Topic id="d0ebb40f-c718-4ac8-8672-4e9f6154263f" visible="True" title="Version 1.0.2.0" />
-    <Topic id="a6bd6618-b6e0-466d-b831-b0aac942730c" visible="True" isSelected="true" title="Version 1.0.3.0" />
+    <Topic id="a6bd6618-b6e0-466d-b831-b0aac942730c" visible="True" title="Version 1.0.3.0" />
   </Topic>
 </Topics>

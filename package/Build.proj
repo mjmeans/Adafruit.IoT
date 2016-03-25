@@ -1,0 +1,92 @@
+<Project DefaultTargets="BuildAll" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+  <Target Name="Setup">
+    <!-- Default to Release if not Specified -->
+    <PropertyGroup>
+      <BuildConfiguration Condition="'$(BuildConfiguration)' == ''" >Release</BuildConfiguration>
+      <BuildTargets Condition="'$(BuildTargets)' == ''" >Clean;Build</BuildTargets>
+    </PropertyGroup>
+  
+    <!-- Define Architectures -->
+    <ItemGroup>
+      <Architecture Include="AnyCPU-NET">
+        <BuildName>AnyCPU</BuildName>
+        <BuildDir></BuildDir>
+        <OutDir>lib\dotnet</OutDir>
+      </Architecture>
+      <Architecture Include="AnyCPU-UAP">
+        <BuildName>AnyCPU</BuildName>
+        <BuildDir></BuildDir>
+        <OutDir>lib\uap10.0</OutDir>
+      </Architecture>
+      <!--<Architecture Include="ARM">
+        <BuildName>ARM</BuildName>
+        <BuildDir>ARM</BuildDir>
+        <OutDir>runtime\win10-arm\lib</OutDir>
+      </Architecture>
+      <Architecture Include="x86">
+        <BuildName>x86</BuildName>
+        <BuildDir>x86</BuildDir>
+        <OutDir>runtime\win10-x86\lib</OutDir>
+      </Architecture>
+      <Architecture Include="x64">
+        <BuildName>x64</BuildName>
+        <BuildDir>x64</BuildDir>
+        <OutDir>runtime\win10-x64\lib</OutDir>
+      </Architecture>-->
+    </ItemGroup>
+
+    <!-- Define Projects to Build -->
+    <ItemGroup>
+      <ProjectToBuild Include="Adafruit.IoT">
+        <Architectures>AnyCPU-UAP</Architectures>
+        <Path>..\src\Adafruit.IoT</Path>
+      </ProjectToBuild>
+    </ItemGroup>
+
+    <!-- Create a Merge of Each Project + Supported Architecture -->
+    <CreateItem Include="@(ProjectToBuild)" AdditionalMetadata="BuildIdentity=%(Architecture.Identity);BuildName=%(Architecture.BuildName);BuildDir=%(Architecture.BuildDir);OutDir=%(Architecture.OutDir)">
+      <Output ItemName="PAToBuild" TaskParameter="Include" />
+    </CreateItem>
+  <ItemGroup>
+      <ProjectArchitectureToBuild Include="@(PAToBuild)" Condition="$([System.String]::Copy('%(PAToBuild.Architectures)').Contains('%(PAToBuild.BuildIdentity)'))"/>
+  </ItemGroup>
+  </Target>
+
+  <!-- Build Each Project for Each Architecture -->
+  <Target Name="BuildAll" DependsOnTargets="Setup" Inputs="@(ProjectArchitectureToBuild)" Outputs="%(Identity)">
+    <PropertyGroup>
+      <BuildDir>%(ProjectArchitectureToBuild.Path)\bin%(ProjectArchitectureToBuild.BuildDir)\$(BuildConfiguration)</BuildDir>
+      <BuildLayoutDir>$(BuildDir)\%(ProjectArchitectureToBuild.Identity)</BuildLayoutDir>
+      <OutDir>$(MSBuildProjectDirectory)\Builds\%(ProjectArchitectureToBuild.Identity)\%(ProjectArchitectureToBuild.OutDir)</OutDir>
+      <OutLayoutDir>$(OutDir)\%(ProjectArchitectureToBuild.Identity)</OutLayoutDir>
+    </PropertyGroup>
+
+    <!-- Clean output folder -->
+    <Message Text="Cleaning output folders" Importance="high"/>
+    <ItemGroup>
+      <CleanFiles Include="$(OutDir)\**\*.*" />
+    </ItemGroup>
+    <Delete Files="@(CleanFiles)" />
+
+    <!-- Build -->
+    <Message Text="Building %(ProjectArchitectureToBuild.Identity) - %(ProjectArchitectureToBuild.BuildIdentity) to $(OutDir)" Importance="high" />
+    <MSBuild Projects="%(ProjectArchitectureToBuild.Path)\%(ProjectArchitectureToBuild.Identity).csproj"
+             Properties="Configuration=$(BuildConfiguration);Platform=%(ProjectArchitectureToBuild.BuildName)"
+             ContinueOnError="false"/>
+
+    <!-- Get output files for current build -->
+    <ItemGroup>
+      <BinFiles Include="$(BuildDir)\%(ProjectArchitectureToBuild.Identity).*" Exclude="$(BuildDir)\*.xr.xml" />
+      <LayoutFiles Include="$(BuildLayoutDir)\**\*.*" />
+    </ItemGroup>
+    
+    <!-- Making sure output dir exists -->
+    <MakeDir Directories="$(OutDir)" />
+    
+    <!-- Copy to Nuget package folder -->
+    <Message Text="Copying output files to $(OutDir)"  Importance="high"/>
+    <Copy SourceFiles="@(BinFiles)" DestinationFolder="$(OutDir)" Condition="Exists('%(FullPath)')"/>
+    <Copy SourceFiles="@(LayoutFiles)" DestinationFolder="$(OutLayoutDir)\%(RecursiveDir)" Condition="Exists('%(FullPath)')"/>
+  </Target>
+</Project>
