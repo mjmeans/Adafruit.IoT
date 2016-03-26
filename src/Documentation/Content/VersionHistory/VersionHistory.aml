@@ -10,8 +10,12 @@ life of the project.</para>
 			<title>Version History</title>
 			<content>
 				<para>Select a version below to see a description of its changes.</para>
-
 				<list class="bullet">
+          <listItem>
+            <para>
+              <link xlink:href="e8aceecf-d1b5-414d-abe7-f3a050c3001b"/>
+            </para>
+          </listItem>
           <listItem>
             <para>
               <link xlink:href="a6bd6618-b6e0-466d-b831-b0aac942730c"/>
