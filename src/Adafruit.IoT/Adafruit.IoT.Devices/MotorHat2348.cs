@@ -135,15 +135,15 @@ namespace Adafruit.IoT.Devices
         public PwmDCMotor CreateDCMotor(byte driverChannel)
         {
             PwmDCMotor value;
-
+            var actualDriverChannel = driverChannel - 1;
             if ((driverChannel < 1) || (driverChannel > 4))
                 throw new InvalidOperationException("CreateDCMotor parameter 'driverChannel' must be between 1 and 4.");
-            if (motorChannelsUsed[driverChannel - 1] == true)
+            if (motorChannelsUsed[actualDriverChannel] == true)
                 throw new MotorHatException(string.Format("Channel {0} aleady in assigned.", driverChannel));
             EnsureInitialized();
 
-            value = new PwmDCMotor(this._pwm, driverChannel);
-            motorChannelsUsed[driverChannel - 1] = true;
+            value = new PwmDCMotor(this._pwm, (byte)actualDriverChannel);
+            motorChannelsUsed[actualDriverChannel] = true;
             motors.Add(value);
 
             return value;
