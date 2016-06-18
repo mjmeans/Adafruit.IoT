@@ -131,6 +131,12 @@
       <Name>Windows IoT Extensions for the UWP</Name>
     </SDKReference>
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Adafruit.IoT\Adafruit.IoT.csproj">
+      <Project>{e08f6601-bcd8-410f-b455-6101c1bc31ca}</Project>
+      <Name>Adafruit.IoT</Name>
+    </ProjectReference>
+  </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>
   </PropertyGroup>
