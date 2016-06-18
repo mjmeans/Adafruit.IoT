@@ -14,7 +14,7 @@
     <Name>Documentation</Name>
     <!-- SHFB properties -->
     <FrameworkVersion>.NET for Universal Windows</FrameworkVersion>
-    <OutputPath>..\..\doc\</OutputPath>
+    <OutputPath>Help\</OutputPath>
     <HtmlHelpName>AdafruitIoT</HtmlHelpName>
     <Language>en-US</Language>
     <TransformComponentArguments>
@@ -35,7 +35,7 @@
     <KeepLogFile>True</KeepLogFile>
     <DisableCodeBlockComponent>False</DisableCodeBlockComponent>
     <CleanIntermediates>True</CleanIntermediates>
-    <HelpFileVersion>1.0.3.0</HelpFileVersion>
+    <HelpFileVersion>1.0.6.0</HelpFileVersion>
     <MaximumGroupParts>2</MaximumGroupParts>
     <NamespaceGrouping>False</NamespaceGrouping>
     <SyntaxFilters>C#, Visual Basic, Managed C++</SyntaxFilters>
@@ -87,6 +87,7 @@
     <None Include="Content\VersionHistory\v1.0.2.0.aml" />
     <None Include="Content\VersionHistory\v1.0.3.0.aml" />
     <None Include="Content\VersionHistory\v1.0.4.0.aml" />
+    <None Include="Content\VersionHistory\v1.0.6.0.aml" />
     <None Include="Content\VersionHistory\VersionHistory.aml" />
     <None Include="Content\Welcome.aml" />
   </ItemGroup>
@@ -103,8 +104,9 @@
   <PropertyGroup>
     <PreBuildEvent>
     </PreBuildEvent>
-    <PostBuildEvent>
-    </PostBuildEvent>
+    <PostBuildEvent>del ..\..\doc\*.* /s
+xcopy .\Help\*.* ..\..\doc\
+</PostBuildEvent>
     <RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
   </PropertyGroup>
 </Project>
