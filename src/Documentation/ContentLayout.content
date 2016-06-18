@@ -13,7 +13,6 @@
     <Topic id="3e34f284-8503-42aa-bf0c-8a4b1e949800" visible="True" title="Version 1.0.1.0" />
     <Topic id="d0ebb40f-c718-4ac8-8672-4e9f6154263f" visible="True" title="Version 1.0.2.0" />
     <Topic id="a6bd6618-b6e0-466d-b831-b0aac942730c" visible="True" title="Version 1.0.3.0" />
-    <Topic id="e8aceecf-d1b5-414d-abe7-f3a050c3001b" visible="True" title="Version 1.0.4.0" />
-    <Topic id="e81afedb-0832-4b73-98c5-ea1f9926dce0" visible="True" isSelected="true" title="Version 1.0.6.0" />
+    <Topic id="e8aceecf-d1b5-414d-abe7-f3a050c3001b" visible="True" isSelected="true" title="Version 1.0.4.0" />
   </Topic>
 </Topics>
