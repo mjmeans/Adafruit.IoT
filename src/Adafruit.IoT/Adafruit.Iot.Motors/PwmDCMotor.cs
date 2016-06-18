@@ -17,6 +17,7 @@ namespace Adafruit.IoT.Motors
         private byte _motorNum;
         private Windows.Devices.Pwm.PwmPin _PWMpin;
         private double _speed;
+        private MotorState _motorState;
 
         /// <summary>
         /// Initializes a new <see cref="PwmDCMotor"/> instance.
@@ -64,33 +65,31 @@ namespace Adafruit.IoT.Motors
         /// <summary>
         /// Runs the motor in the specified direction.
         /// </summary>
-        /// <param name="command">A <see cref="Direction"/>.</param>
+        /// <param name="direction">A <see cref="Direction"/>.</param>
         /// <remarks>
         /// This method uses the previously value set using <see cref="SetSpeed(double)"/> to modulate the PWM power going to the motor.
         /// In order to change the speed of a running motor you must call this method again after calling <see cref="SetSpeed(double)"/>.
         /// </remarks>
-        public void Run(Direction command)
+        public void Run(Direction direction)
         {
             if (this._controller == null)
                 return;
 
-            if (command == Direction.Forward)
+            switch (direction)
             {
-                this._IN2pin.Stop();
-                this._IN1pin.Start();
+                case Direction.Forward:
+                    this._PWMpin.SetActiveDutyCyclePercentage(_speed);
+                    this._IN2pin.Stop();
+                    this._IN1pin.Start();
+                    break;
+                case Direction.Backward:
+                    this._PWMpin.SetActiveDutyCyclePercentage(_speed);
+                    this._IN1pin.Stop();
+                    this._IN2pin.Start();
+                    break;
+                default:
+                    throw new ArgumentException("direction");
             }
-            else if (command == Direction.Backward)
-            {
-                this._IN1pin.Stop();
-                this._IN2pin.Start();
-            }
-            else if (command == Direction.Release)
-            {
-                this._IN1pin.Stop();
-                this._IN2pin.Stop();
-            }
-            else
-                throw new ArgumentException("command");
         }
 
         /// <summary>
@@ -101,10 +100,8 @@ namespace Adafruit.IoT.Motors
         /// <note type="note">
         /// Although this method has a parameter called rpm, this parameter actually sets the duty cycle of the PWM controller that powers the motor.
         /// </note>
-        /// <remarks>
         /// This method sets the value used to modulate the PWM power going to the motor.
         /// In order to change the speed of a running motor you must call this method and then call <see cref="Run(Direction)"/> again.
-        /// </remarks>
         /// </remarks>
         public void SetSpeed(double rpm)
         {
@@ -113,11 +110,27 @@ namespace Adafruit.IoT.Motors
             if (rpm > 1)
                 rpm = 1;
             _speed = rpm;
+        }
 
+        /// <summary>
+        /// Stop the motor drivers.
+        /// </summary>
+        public void Stop()
+        {
+            this._PWMpin.SetActiveDutyCyclePercentage(0);
+            this._IN1pin.Stop();
+            this._IN2pin.Stop();
+        }
 
-            if (_IN1pin.IsStarted) { this._IN1pin.SetActiveDutyCyclePercentage(_speed); }
-
-            if (_IN2pin.IsStarted) { this._IN2pin.SetActiveDutyCyclePercentage(_speed); }
+        /// <summary>
+        /// Gets the current <see cref="MotorState"/>.
+        /// </summary>
+        public MotorState State
+        {
+            get
+            {
+                return _motorState;
+            }
         }
 
         #region IDisposable Support

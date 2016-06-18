@@ -39,6 +39,15 @@ namespace Adafruit.IoT
             // Stop the auxiliary PWM pin
             pwm.Stop();
 
+            // Stops the stepper motor driver but keeps it energized (to hold position like a brake).
+            stepper.Brake();
+
+            // for demonstration purposes we will wait 2 seconds to observe the PWM and motor operation.
+            await Task.Delay(2000);
+
+            // Stops the stepper motor driver and de-energizes it.
+            stepper.Stop();
+
             // Dispose of the MotorHat and free all its resources
             mh.Dispose();
         }
@@ -82,7 +91,7 @@ namespace Adafruit.IoT
                     motor.SetSpeed(i);
                     await Task.Delay(incrementDelay);
                 }
-                motor.Run(Direction.Release);
+                motor.Stop();
                 Debug.WriteLine("repeat!");
             }
         }
