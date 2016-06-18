@@ -29,18 +29,18 @@
         /// <summary>
         /// Motor will perform 4 full steps per step cycle.
         /// </summary>
-        Full = 1,
+        Full,
         /// <summary>
         /// Motor will perform 4 wave steps per step cycle.
         /// </summary>
-        Wave = 2,
+        Wave,
         /// <summary>
         /// Motor will perform 8 half steps per step cycle.
         /// </summary>
-        Half = 3,
+        Half,
         /// <summary>
         /// Motor will perform 8 sine-cosine micro steps per full step, or 32 micro steps per step cycle.
         /// </summary>
-        Microstep8 = 4
+        Microstep8
     }
 }
