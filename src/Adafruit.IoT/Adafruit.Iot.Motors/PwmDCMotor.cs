@@ -76,15 +76,18 @@ namespace Adafruit.IoT.Motors
 
             if (command == Direction.Forward)
             {
-                this._PWMpin.SetActiveDutyCyclePercentage(_speed);
                 this._IN2pin.Stop();
                 this._IN1pin.Start();
             }
             else if (command == Direction.Backward)
             {
-                this._PWMpin.SetActiveDutyCyclePercentage(_speed);
                 this._IN1pin.Stop();
                 this._IN2pin.Start();
+            }
+            else if (command == Direction.Release)
+            {
+                this._IN1pin.Stop();
+                this._IN2pin.Stop();
             }
             else
                 throw new ArgumentException("command");
@@ -110,6 +113,11 @@ namespace Adafruit.IoT.Motors
             if (rpm > 1)
                 rpm = 1;
             _speed = rpm;
+
+
+            if (_IN1pin.IsStarted) { this._IN1pin.SetActiveDutyCyclePercentage(_speed); }
+
+            if (_IN2pin.IsStarted) { this._IN2pin.SetActiveDutyCyclePercentage(_speed); }
         }
 
         #region IDisposable Support
