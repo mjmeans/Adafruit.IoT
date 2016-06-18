@@ -1,7 +1,6 @@
 ﻿using Adafruit.IoT.Devices;
 using Adafruit.IoT.Motors;
 using System;
-using System.Diagnostics;
 using System.Threading.Tasks;
 using Windows.Devices.Pwm;
 
@@ -9,7 +8,7 @@ namespace Adafruit.IoT
 {
     internal class Examples
     {
-        public async void StepperMotorExample()
+        public async void Example1()
         {
             MotorHat2348 mh = null;
             PwmStepperMotor stepper = null;
@@ -41,50 +40,6 @@ namespace Adafruit.IoT
 
             // Dispose of the MotorHat and free all its resources
             mh.Dispose();
-        }
-
-        public async void DCMotorExample()
-        {
-            var mh = new MotorHat2348(0x60);
-            var motor = mh.CreateDCMotor(3);
-
-            int incrementDelay = 50; // milliseconds
-            double speedIncrement = 0.01;
-
-            while (true)
-            {
-                motor.Run(Direction.Forward);
-
-                Debug.WriteLine("Forward - Speed Up!");
-                for (double i = 0; i < 1; i += speedIncrement)
-                {
-                    motor.SetSpeed(i);
-                    await Task.Delay(incrementDelay);
-                }
-                Debug.WriteLine("Forward - Slow Down!");
-                for (double i = 1; i > 0; i -= speedIncrement)
-                {
-                    motor.SetSpeed(i);
-                    await Task.Delay(incrementDelay);
-                }
-
-                motor.Run(Direction.Backward);
-
-                Debug.WriteLine("Backward - Speed Up!");
-                for (double i = 0; i < 1; i += speedIncrement)
-                {
-                    motor.SetSpeed(i);
-                    await Task.Delay(incrementDelay);
-                }
-                Debug.WriteLine("Backward - Slow Down!");
-                for (double i = 1; i > 0; i -= speedIncrement)
-                {
-                    motor.SetSpeed(i);
-                    await Task.Delay(incrementDelay);
-                }
-                motor.Run(Direction.Release);
-                Debug.WriteLine("reapeat!");
-            }
         }
     }
 }
