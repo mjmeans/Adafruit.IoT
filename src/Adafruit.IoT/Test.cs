@@ -83,7 +83,7 @@ namespace Adafruit.IoT
                     await Task.Delay(incrementDelay);
                 }
                 motor.Run(Direction.Release);
-                Debug.WriteLine("repeat!");
+                Debug.WriteLine("reapeat!");
             }
         }
     }
