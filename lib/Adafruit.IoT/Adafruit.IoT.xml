@@ -4,29 +4,6 @@
         <name>Adafruit.IoT</name>
     </assembly>
     <members>
-        <member name="T:Adafruit.IoT.Motors.MotorState">
-            <summary>
-            The valid states of a stepper motor.
-            </summary>
-        </member>
-        <member name="F:Adafruit.IoT.Motors.MotorState.Stop">
-            <summary>
-            The motor is not running or energized.
-            </summary>
-        </member>
-        <member name="F:Adafruit.IoT.Motors.MotorState.Run">
-            <summary>
-            The motor is running.
-            </summary>
-        </member>
-        <member name="F:Adafruit.IoT.Motors.MotorState.Brake">
-            <summary>
-            The motor is stopped but energized, holding position like a brake
-            </summary>
-            <remarks>
-            This state is only valid for stepper motors.
-            </remarks>
-        </member>
         <member name="T:Adafruit.IoT.Motors.PwmDCMotor">
             <summary>
             Represents a DC Motor connected to a PWM controller.
@@ -46,7 +23,7 @@
             <summary>
             Runs the motor in the specified direction.
             </summary>
-            <param name="direction">A <see cref="T:Adafruit.IoT.Motors.Direction" />.</param>
+            <param name="command">A <see cref="T:Adafruit.IoT.Motors.Direction" />.</param>
             <remarks>
             This method uses the previously value set using <see cref="M:Adafruit.IoT.Motors.PwmDCMotor.SetSpeed(System.Double)" /> to modulate the PWM power going to the motor.
             In order to change the speed of a running motor you must call this method again after calling <see cref="M:Adafruit.IoT.Motors.PwmDCMotor.SetSpeed(System.Double)" />.
@@ -61,19 +38,11 @@
             <note type="note">
             Although this method has a parameter called rpm, this parameter actually sets the duty cycle of the PWM controller that powers the motor.
             </note>
+            <remarks>
             This method sets the value used to modulate the PWM power going to the motor.
             In order to change the speed of a running motor you must call this method and then call <see cref="M:Adafruit.IoT.Motors.PwmDCMotor.Run(Adafruit.IoT.Motors.Direction)" /> again.
             </remarks>
-        </member>
-        <member name="M:Adafruit.IoT.Motors.PwmDCMotor.Stop">
-            <summary>
-            Stop the motor drivers.
-            </summary>
-        </member>
-        <member name="P:Adafruit.IoT.Motors.PwmDCMotor.State">
-            <summary>
-            Gets the current <see cref="T:Adafruit.IoT.Motors.MotorState" />.
-            </summary>
+            </remarks>
         </member>
         <member name="M:Adafruit.IoT.Motors.PwmDCMotor.Dispose(System.Boolean)">
             <inheritdoc />
@@ -118,22 +87,6 @@
             <remarks>
             The desired speed of the motor is used to calculate the delays between steps for a stepper motor or the duty cycle of the power supplied to a DC motor.
             </remarks>
-        </member>
-        <member name="M:Adafruit.IoT.Motors.IMotor.Run(Adafruit.IoT.Motors.Direction)">
-            <summary>
-            Run the motor continuously in the specified direction
-            </summary>
-            <param name="direction">A <see cref="T:Adafruit.IoT.Motors.Direction" />.</param>
-        </member>
-        <member name="M:Adafruit.IoT.Motors.IMotor.Stop">
-            <summary>
-            Stop the motor and cut its power.
-            </summary>
-        </member>
-        <member name="P:Adafruit.IoT.Motors.IMotor.State">
-            <summary>
-            Gets the current <see cref="T:Adafruit.IoT.Motors.MotorState" />.
-            </summary>
         </member>
         <member name="T:Adafruit.IoT.Motors.PwmStepperMotor">
             <summary>
@@ -182,47 +135,20 @@
             <param name="direction">A <see cref="T:Adafruit.IoT.Motors.Direction" />.</param>
             <param name="stepStyle">A <see cref="T:Adafruit.IoT.Motors.SteppingStyle" />.</param>
             <remarks>
-            StepAsync cannot be called if the motor is already running.
+            .
             </remarks>
         </member>
         <member name="M:Adafruit.IoT.Motors.PwmStepperMotor.StepAsyncInternal(System.Int32,Adafruit.IoT.Motors.Direction,Adafruit.IoT.Motors.SteppingStyle)">
             <summary>
             Async method to step the motor multiple steps.
             </summary>
-            <param name="_steps">The number of steps to step the motor.</param>
+            <param name="steps">The number of steps to step the motor.</param>
             <param name="direction">A <see cref="T:Adafruit.IoT.Motors.Direction" />.</param>
             <param name="stepStyle">A <see cref="T:Adafruit.IoT.Motors.SteppingStyle" />.</param>
             <returns>The current step number.</returns>
             <remarks>
             The speed at which the steps will occur will be at the best effort to achieve the desired <see cref="M:Adafruit.IoT.Motors.PwmStepperMotor.SetSpeed(System.Double)" /> speed.
             </remarks>
-        </member>
-        <member name="P:Adafruit.IoT.Motors.PwmStepperMotor.State">
-            <summary>
-            Gets the current <see cref="T:Adafruit.IoT.Motors.MotorState" />.
-            </summary>
-        </member>
-        <member name="M:Adafruit.IoT.Motors.PwmStepperMotor.SetStepStyle(Adafruit.IoT.Motors.SteppingStyle)">
-            <summary>
-            Sets the stepping style of the motor.
-            </summary>
-            <param name="stepStyle"></param>
-        </member>
-        <member name="M:Adafruit.IoT.Motors.PwmStepperMotor.Run(Adafruit.IoT.Motors.Direction)">
-            <summary>
-            Start the motor running in the specified direction.
-            </summary>
-            <param name="direction"></param>
-        </member>
-        <member name="M:Adafruit.IoT.Motors.PwmStepperMotor.Brake">
-            <summary>
-            Stop the stepper motor but keeps the stepper drivers energized.
-            </summary>
-        </member>
-        <member name="M:Adafruit.IoT.Motors.PwmStepperMotor.Stop">
-            <summary>
-            Stop the stepper motor and de-energize the stepper drivers.
-            </summary>
         </member>
         <member name="P:Adafruit.IoT.Motors.PwmStepperMotor.PowerFactor">
             <summary>
