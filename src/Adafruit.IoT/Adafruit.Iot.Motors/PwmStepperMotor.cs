@@ -5,6 +5,9 @@ using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
 using Windows.Foundation;
+using Windows.System.Threading;
+using Windows.UI.Core;
+using Windows.UI.Xaml;
 
 namespace Adafruit.IoT.Motors
 {
@@ -53,8 +56,8 @@ namespace Adafruit.IoT.Motors
         private int[] _currentcoils = { 0, 0, 0, 0 };
         private Windows.Devices.Pwm.PwmPin[] _coilpins;
 
-        private SteppingStyle _stepStyle;
-        private MotorState _motorState;
+        SteppingStyle _stepStyle;
+        private MotorState _stepAsyncState;
 
         /// <summary>
         /// Initializes a new <see cref="PwmStepperMotor"/> instance.
@@ -337,30 +340,33 @@ namespace Adafruit.IoT.Motors
         /// </remarks>
         public IAsyncAction StepAsync(int steps, Direction direction, SteppingStyle stepStyle)
         {
-            if (_motorState == MotorState.Run)
+            if (_stepAsyncState == MotorState.Run)
                 throw new InvalidOperationException("Stepper motor is already running.");
 
+            cts = new CancellationTokenSource();
             _stepStyle = stepStyle;
-            var task = StepAsyncInternal(steps, direction, stepStyle).AsAsyncAction();
-            _stepperTask = task;
-            return task;
+            WorkItemHandler loop = new WorkItemHandler((IAsyncAction) =>
+                motorThread(steps, direction, stepStyle, cts.Token)
+            );
+            _runTask = ThreadPool.RunAsync(loop, WorkItemPriority.High);
+            return _runTask;
         }
 
-        IAsyncAction _stepperTask;
+        CancellationTokenSource cts;
 
         /// <summary>
         /// Async method to step the motor multiple steps.
         /// </summary>
-        /// <param name="_steps">The number of steps to step the motor.</param>
+        /// <param name="steps">The number of steps to step the motor.</param>
         /// <param name="direction">A <see cref="Direction"/>.</param>
         /// <param name="stepStyle">A <see cref="SteppingStyle"/>.</param>
         /// <returns>The current step number.</returns>
         /// <remarks>
         /// The speed at which the steps will occur will be at the best effort to achieve the desired <see cref="SetSpeed(double)"/> speed.
         /// </remarks>
-        internal async Task StepAsyncInternal(int steps, Direction direction, SteppingStyle stepStyle)
+        internal void motorThread(int steps, Direction direction, SteppingStyle stepStyle, CancellationToken ct)
         {
-            _motorState = MotorState.Run;
+            _stepAsyncState = MotorState.Run;
             double s_per_s;
             int _steps = steps;
             int lateststep = 0;
@@ -385,14 +391,13 @@ namespace Adafruit.IoT.Motors
             {
                 while ((s < _steps) || (steps == -1))
                 {
+                    if (ct.IsCancellationRequested) break;
                     lateststep = this.OneStep(direction, stepStyle);
                     if (_steps != -1) s++;
                     nexttime += ticksperstep;
-                    await Task.Run(() =>
-                    {
-                        while (watch.ElapsedTicks < nexttime)
-                        { }
-                    });
+                    while (watch.ElapsedTicks < nexttime) {
+                        if (ct.IsCancellationRequested) break;
+                    }
                 }
             }
             catch (TaskCanceledException)
@@ -406,49 +411,32 @@ namespace Adafruit.IoT.Motors
                     {
                         lateststep = this.OneStep(direction, stepStyle);
                         nexttime += ticksperstep;
-                        await Task.Run(() =>
-                        {
-                            while (watch.ElapsedTicks < nexttime)
-                            { }
-                        });
+                        while (watch.ElapsedTicks < nexttime) { }
                     }
                 }
             }
-            _motorState = MotorState.Brake;
+            _stepAsyncState = MotorState.Brake;
         }
 
-        /// <summary>
-        /// Gets the current <see cref="MotorState"/>.
-        /// </summary>
-        public MotorState State
+        public MotorState StepAsyncState
         {
             get
             {
-                return _motorState;
+                return _stepAsyncState;
             }
         }
 
-        /// <summary>
-        /// Sets the stepping style of the motor.
-        /// </summary>
-        /// <param name="stepStyle"></param>
         public void SetStepStyle(SteppingStyle stepStyle)
         {
             _stepStyle = stepStyle;
         }
 
-        /// <summary>
-        /// Start the motor running in the specified direction.
-        /// </summary>
-        /// <param name="direction"></param>
+        IAsyncAction _runTask;
+
         public void Run(Direction direction)
         {
-            if (_stepperTask != null)
-            {
-                _stepperTask.Cancel();
-                _stepperTask = null;
-            }
-            
+            Microsoft.IoT.DeviceHelpers.TaskExtensions.UISafeWait(cancelRun);
+
             // Do not await, this should continue running
             StepAsync(-1, direction, _stepStyle);
         }
@@ -458,26 +446,30 @@ namespace Adafruit.IoT.Motors
         /// </summary>
         public void Brake()
         {
-            if (_stepperTask != null)
-            {
-                _stepperTask.Cancel();
-                _stepperTask = null;
-            }
+            Microsoft.IoT.DeviceHelpers.TaskExtensions.UISafeWait(cancelRun);
         }
 
-        /// <summary>
-        /// Stop the stepper motor and de-energize the stepper drivers.
-        /// </summary>
         public void Stop()
         {
-            if (_stepperTask != null)
+            Microsoft.IoT.DeviceHelpers.TaskExtensions.UISafeWait(cancelRun);
+            for (int i = 0; i < 4; i++)
             {
-                _stepperTask.Cancel();
-                _stepperTask = null;
+                _coilpins[i].SetActiveDutyCyclePercentage(0.0);
             }
-            this._PWMA.SetActiveDutyCyclePercentage(0);
-            this._PWMB.SetActiveDutyCyclePercentage(0);
-            _motorState = MotorState.Stop;
+            _stepAsyncState = MotorState.Stop;
+        }
+
+        private async Task cancelRun()
+        {
+            if (cts != null)
+            {
+                cts.Cancel();
+                await Task.Run(() =>
+                {
+                    while (_runTask.Status ==  AsyncStatus.Started) { };
+                });
+                cts = null;
+            }
         }
 
         #region IDisposable Support

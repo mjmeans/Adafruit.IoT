@@ -1,6 +1,5 @@
 ﻿{
   "dependencies": {
-    "Adafruit.IoT": "1.0.5",
     "Microsoft.NETCore.UniversalWindowsPlatform": "5.1.0"
   },
   "frameworks": {

@@ -1,5 +1,4 @@
-﻿
-namespace Adafruit.IoT.Motors
+﻿namespace Adafruit.IoT.Motors
 {
     /// <summary>
     /// Defines common methods used by all motors. 
@@ -28,11 +27,5 @@ namespace Adafruit.IoT.Motors
         /// Stop the motor and cut its power.
         /// </summary>
         void Stop();
-
-        /// <summary>
-        /// Gets the current <see cref="MotorState"/>.
-        /// </summary>
-        MotorState State { get; }
-
     }
 }
