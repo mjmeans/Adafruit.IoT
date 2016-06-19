@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 using System.Threading.Tasks;
 using Windows.Devices.Enumeration;
 using Windows.Devices.I2c;
@@ -405,10 +406,10 @@ namespace Adafruit.IoT.Devices.Pwm
             var aqs = I2cDevice.GetDeviceSelector(controllerName);
 
             // Find the first I2C device
-            IReadOnlyList<DeviceInformation> devices = await DeviceInformation.FindAllAsync(aqs);
+            var di = (await DeviceInformation.FindAllAsync(aqs)).FirstOrDefault();
 
             // Make sure we found an I2C device
-            if ((devices == null) || (devices.Count == 0)) { throw new DeviceNotFoundException(controllerName); }
+            if (di == null) { throw new DeviceNotFoundException(controllerName); }
 
             // Connection settings for primary device
             var primarySettings = new I2cConnectionSettings(this.address);
@@ -416,7 +417,7 @@ namespace Adafruit.IoT.Devices.Pwm
             primarySettings.SharingMode = I2cSharingMode.Exclusive;
 
             // Get the primary device
-            primaryDevice = await I2cDevice.FromIdAsync(devices[0].Id, primarySettings);
+            primaryDevice = await I2cDevice.FromIdAsync(di.Id, primarySettings);
             if (primaryDevice == null) { throw new DeviceNotFoundException("PCA9685 primary device"); }
 
             // Connection settings for reset device
@@ -424,7 +425,7 @@ namespace Adafruit.IoT.Devices.Pwm
             resetSettings.SlaveAddress = I2C_RESET_ADDRESS;
 
             // Get the reset device
-            resetDevice = await I2cDevice.FromIdAsync(devices[0].Id, resetSettings);
+            resetDevice = await I2cDevice.FromIdAsync(di.Id, resetSettings);
             if (resetDevice == null) { throw new DeviceNotFoundException("PCA9685 reset device"); }
 
             // Initialize the controller
