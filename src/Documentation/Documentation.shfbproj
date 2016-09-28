@@ -13,7 +13,7 @@
     <RootNamespace>DevicesDoc</RootNamespace>
     <Name>Documentation</Name>
     <!-- SHFB properties -->
-    <FrameworkVersion>.NET for Universal Windows</FrameworkVersion>
+    <FrameworkVersion>.NET for Universal Windows (NuGet)</FrameworkVersion>
     <OutputPath>Help\</OutputPath>
     <HtmlHelpName>AdafruitIoT</HtmlHelpName>
     <Language>en-US</Language>
@@ -88,6 +88,7 @@
     <None Include="Content\VersionHistory\v1.0.2.0.aml" />
     <None Include="Content\VersionHistory\v1.0.3.0.aml" />
     <None Include="Content\VersionHistory\v1.0.4.0.aml" />
+    <None Include="Content\VersionHistory\v1.0.5.0.aml" />
     <None Include="Content\VersionHistory\v1.0.6.0.aml" />
     <None Include="Content\VersionHistory\VersionHistory.aml" />
     <None Include="Content\Welcome.aml" />
@@ -105,8 +106,9 @@
   <PropertyGroup>
     <PreBuildEvent>
     </PreBuildEvent>
-    <PostBuildEvent>del ..\..\doc\*.* /s
-xcopy .\Help\*.* ..\..\doc\
+    <PostBuildEvent>if exist "$(SolutionDir)..\doc" rmdir /s /q "$(SolutionDir)..\doc"
+xcopy ".\Help\*.*" "..\..\doc\" /s/q
+rmdir /s /q ".\Help"
 </PostBuildEvent>
     <RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
   </PropertyGroup>
