@@ -59,6 +59,10 @@ namespace Adafruit.IoT.Motors
             this._PWMpin = this._controller.OpenPin(pwm);
             this._IN1pin = this._controller.OpenPin(in1);
             this._IN2pin = this._controller.OpenPin(in2);
+
+            this._PWMpin.Start();
+            this._IN1pin.Start();
+            this._IN2pin.Start();
         }
 
         /// <summary>
@@ -78,13 +82,13 @@ namespace Adafruit.IoT.Motors
             {
                 case Direction.Forward:
                     this._PWMpin.SetActiveDutyCyclePercentage(_speed);
-                    this._IN2pin.Stop();
-                    this._IN1pin.Start();
+                    this._IN2pin.SetActiveDutyCyclePercentage(0);
+                    this._IN1pin.SetActiveDutyCyclePercentage(1);
                     break;
                 case Direction.Backward:
                     this._PWMpin.SetActiveDutyCyclePercentage(_speed);
-                    this._IN1pin.Stop();
-                    this._IN2pin.Start();
+                    this._IN1pin.SetActiveDutyCyclePercentage(0);
+                    this._IN2pin.SetActiveDutyCyclePercentage(1);
                     break;
                 default:
                     throw new ArgumentException("direction");
@@ -113,11 +117,12 @@ namespace Adafruit.IoT.Motors
             _speed = rpm;
         }
 
+        /// <inheritdoc/>
         public void Stop()
         {
             this._PWMpin.SetActiveDutyCyclePercentage(0);
-            this._IN1pin.Stop();
-            this._IN2pin.Stop();
+            this._IN1pin.SetActiveDutyCyclePercentage(0);
+            this._IN2pin.SetActiveDutyCyclePercentage(0);
         }
 
         #region IDisposable Support
