@@ -360,6 +360,7 @@ namespace Adafruit.IoT.Motors
         /// <param name="steps">The number of steps to step the motor.</param>
         /// <param name="direction">A <see cref="Direction"/>.</param>
         /// <param name="stepStyle">A <see cref="SteppingStyle"/>.</param>
+        /// <param name="ct">A <see cref="CancellationToken"/>.</param>
         /// <returns>The current step number.</returns>
         /// <remarks>
         /// The speed at which the steps will occur will be at the best effort to achieve the desired <see cref="SetSpeed(double)"/> speed.
@@ -418,6 +419,9 @@ namespace Adafruit.IoT.Motors
             _stepAsyncState = MotorState.Brake;
         }
 
+        /// <summary>
+        /// The current <see cref="MotorState"/>.
+        /// </summary>
         public MotorState StepAsyncState
         {
             get
@@ -426,6 +430,10 @@ namespace Adafruit.IoT.Motors
             }
         }
 
+        /// <summary>
+        /// Sets the stepping style for this stepper motor.
+        /// </summary>
+        /// <param name="stepStyle">A <see cref="SteppingStyle"/>.</param>
         public void SetStepStyle(SteppingStyle stepStyle)
         {
             _stepStyle = stepStyle;
@@ -433,6 +441,7 @@ namespace Adafruit.IoT.Motors
 
         IAsyncAction _runTask;
 
+        /// <inheritdoc/>
         public void Run(Direction direction)
         {
             Microsoft.IoT.DeviceHelpers.TaskExtensions.UISafeWait(cancelRun);
@@ -449,6 +458,7 @@ namespace Adafruit.IoT.Motors
             Microsoft.IoT.DeviceHelpers.TaskExtensions.UISafeWait(cancelRun);
         }
 
+        /// <inheritdoc/>
         public void Stop()
         {
             Microsoft.IoT.DeviceHelpers.TaskExtensions.UISafeWait(cancelRun);
