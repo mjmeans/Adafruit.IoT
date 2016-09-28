@@ -29,25 +29,25 @@ namespace Adafruit.IoT.Motors
             this._motorNum = driver;
             byte pwm, in1, in2 = 0;
 
-            if (driver == 0)
+            if (driver == 1)
             {
                 pwm = 8;
                 in2 = 9;
                 in1 = 10;
             }
-            else if (driver == 1)
+            else if (driver == 2)
             {
                 pwm = 13;
                 in2 = 12;
                 in1 = 11;
             }
-            else if (driver == 2)
+            else if (driver == 3)
             {
                 pwm = 2;
                 in2 = 3;
                 in1 = 4;
             }
-            else if (driver == 3)
+            else if (driver == 4)
             {
                 pwm = 7;
                 in2 = 6;
