@@ -66,6 +66,7 @@ namespace Adafruit.IoT.Motors
                 throw new MotorHatException("MotorHat Motor must be between 1 and 4 inclusive");
 
             this._PWMpin = this._controller.OpenPin(pwm);
+            this._PWMpin.Start();
 
             this._IN1pin = this._controller.OpenPin(in1);
             this._IN1pin.SetActiveDutyCyclePercentage(1);
