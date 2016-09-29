@@ -62,8 +62,8 @@
             <span class="highlight-keyword">await</span> stepper.StepAsync(<span class="highlight-number">200</span>, Direction.Forward, SteppingStyle.Half);
 
             <span class="highlight-comment">// Activate the pin and set it to 50% duty cycle</span>
-            pwm.Start();
             pwm.SetActiveDutyCyclePercentage(<span class="highlight-number">0.5</span>);
+            pwm.Start();
 
             <span class="highlight-comment">// for demonstration purposes we will wait 10 seconds to observe the PWM and motor operation.</span>
             <span class="highlight-keyword">await</span> Task.Delay(<span class="highlight-number">10000</span>);
