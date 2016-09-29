@@ -460,20 +460,14 @@ namespace Adafruit.IoT.Devices.Pwm
             // if the duty cycle is 0% or 100% then set the full on or off bit
             if (dutyCycle == 1)
             {
-                if (invertPolarity == false)
-                    SetPinState(pin, 1);
-                else
-                    SetPinState(pin, 0);
+                SetPinState(pin, (invertPolarity == false) ? 1 : 0);
                 return;
             }
 
             // if the duty cycle is 0% then set the full on or off bit
             if (dutyCycle == 0)
             {
-                if (invertPolarity == true)
-                    SetPinState(pin, 1);
-                else
-                    SetPinState(pin, 0);
+                SetPinState(pin, (invertPolarity == false) ? 0 : 1);
                 return;
             }
 
