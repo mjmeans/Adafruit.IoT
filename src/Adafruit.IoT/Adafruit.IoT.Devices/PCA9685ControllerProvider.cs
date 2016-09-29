@@ -467,6 +467,16 @@ namespace Adafruit.IoT.Devices.Pwm
                 return;
             }
 
+            // if the duty cycle is 0% then set the full on or off bit
+            if (dutyCycle == 1)
+            {
+                if (invertPolarity == true)
+                    SetPinState(pin, 1);
+                else
+                    SetPinState(pin, 0);
+                return;
+            }
+
             var buffer = new byte[5];
             ushort onRatio = (ushort)Math.Round(dutyCycle * (PULSE_RESOLUTION - 1));
 
