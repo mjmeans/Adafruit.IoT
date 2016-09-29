@@ -45,8 +45,8 @@ namespace Adafruit.IoT.Devices
     ///            await stepper.StepAsync(200, Direction.Forward, SteppingStyle.Half);
     ///
     ///            // Activate the pin and set it to 50% duty cycle
-    ///            pwm.Start();
     ///            pwm.SetActiveDutyCyclePercentage(0.5);
+    ///            pwm.Start();
     ///
     ///            // for demonstration purposes we will wait 10 seconds to observe the PWM and motor operation.
     ///            await Task.Delay(10000);

@@ -11,11 +11,11 @@ namespace Adafruit.IoT.Motors
     /// </remarks>
     public sealed class PwmDCMotor : IMotor, IDisposable
     {
+        private Windows.Devices.Pwm.PwmController _controller;
+        private Windows.Devices.Pwm.PwmPin _PWMpin;
         private Windows.Devices.Pwm.PwmPin _IN1pin;
         private Windows.Devices.Pwm.PwmPin _IN2pin;
-        private Windows.Devices.Pwm.PwmController _controller;
         private byte _motorNum;
-        private Windows.Devices.Pwm.PwmPin _PWMpin;
         private double _speed;
 
         /// <summary>
@@ -66,8 +66,16 @@ namespace Adafruit.IoT.Motors
                 throw new MotorHatException("MotorHat Motor must be between 1 and 4 inclusive");
 
             this._PWMpin = this._controller.OpenPin(pwm);
+
             this._IN1pin = this._controller.OpenPin(in1);
+            this._IN1pin.SetActiveDutyCyclePercentage(1);
+            this._IN1pin.Polarity = Windows.Devices.Pwm.PwmPulsePolarity.ActiveLow;
+            this._IN1pin.Start();
+
             this._IN2pin = this._controller.OpenPin(in2);
+            this._IN2pin.SetActiveDutyCyclePercentage(1);
+            this._IN2pin.Polarity = Windows.Devices.Pwm.PwmPulsePolarity.ActiveLow;
+            this._IN2pin.Start();
         }
 
         /// <summary>
@@ -87,13 +95,13 @@ namespace Adafruit.IoT.Motors
             {
                 case Direction.Forward:
                     this._PWMpin.SetActiveDutyCyclePercentage(_speed);
-                    this._IN2pin.Stop();
-                    this._IN1pin.Start();
+                    this._IN2pin.Polarity = Windows.Devices.Pwm.PwmPulsePolarity.ActiveLow;
+                    this._IN1pin.Polarity = Windows.Devices.Pwm.PwmPulsePolarity.ActiveHigh;
                     break;
                 case Direction.Backward:
                     this._PWMpin.SetActiveDutyCyclePercentage(_speed);
-                    this._IN1pin.Stop();
-                    this._IN2pin.Start();
+                    this._IN1pin.Polarity = Windows.Devices.Pwm.PwmPulsePolarity.ActiveLow;
+                    this._IN2pin.Polarity = Windows.Devices.Pwm.PwmPulsePolarity.ActiveHigh;
                     break;
                 default:
                     throw new ArgumentException("direction");
