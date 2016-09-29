@@ -457,22 +457,24 @@ namespace Adafruit.IoT.Devices.Pwm
             if (!pinAccess[pin])
                 throw new InvalidOperationException("Pin is not acquired");
 
-            // if the duty cycle is 0% or 100% then set the full on or off bit
-            if (dutyCycle == 1)
+            // this needs to result in a value of 0 to 4096, not 4095
+            ushort onRatio = (ushort)Math.Round(dutyCycle * PULSE_RESOLUTION);
+
+            // if the duty cycle would result in a value of 4096 set the full on bit instead
+            if (onRatio == 4096)
             {
                 SetPinState(pin, (invertPolarity == false) ? 1 : 0);
                 return;
             }
 
-            // if the duty cycle is 0% then set the full on or off bit
-            if (dutyCycle == 0)
+            // if the duty cycle would result in a value of 0 set the full off bit instead
+            if (onRatio == 0)
             {
                 SetPinState(pin, (invertPolarity == false) ? 0 : 1);
                 return;
             }
 
             var buffer = new byte[5];
-            ushort onRatio = (ushort)Math.Round(dutyCycle * (PULSE_RESOLUTION - 1));
 
             // Set the initial Address. AI flag is ON and hence  	
             // address will auto-increment after each byte.
