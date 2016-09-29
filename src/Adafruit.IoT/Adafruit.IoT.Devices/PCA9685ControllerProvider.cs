@@ -457,7 +457,7 @@ namespace Adafruit.IoT.Devices.Pwm
             if (!pinAccess[pin])
                 throw new InvalidOperationException("Pin is not acquired");
 
-            // if the duty cycle is 100% then set the full on or off bit
+            // if the duty cycle is 0% or 100% then set the full on or off bit
             if (dutyCycle == 1)
             {
                 if (invertPolarity == false)
@@ -468,7 +468,7 @@ namespace Adafruit.IoT.Devices.Pwm
             }
 
             // if the duty cycle is 0% then set the full on or off bit
-            if (dutyCycle == 1)
+            if (dutyCycle == 0)
             {
                 if (invertPolarity == true)
                     SetPinState(pin, 1);
