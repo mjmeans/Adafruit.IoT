@@ -15,10 +15,21 @@
       <content>
         <list class="bullet">
           <listItem>
+            <para>Update sample project to include DC motor test.</para>
+          </listItem>
+          <listItem>
             <para>Correct DC motor driver selection number (thanks Foggie200).</para>
+          </listItem>
+          <listItem>
             <para>Fixes for DCMotor class (thanks Foggie200).</para>
+          </listItem>
+          <listItem>
             <para>Fix for Stepper Motor losing steps.</para>
+          </listItem>
+          <listItem>
             <para>Add MotorState State to IMotor interface.</para>
+          </listItem>
+          <listItem>
             <para>Improve stepper motor speed accuracy.</para>
           </listItem>
         </list>
