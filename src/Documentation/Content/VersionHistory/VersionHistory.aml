@@ -13,6 +13,19 @@ life of the project.</para>
 				<list class="bullet">
           <listItem>
             <para>
+<<<<<<< HEAD
+=======
+              <link xlink:href="c50d4dcf-71f9-4609-9710-523262a5a921"/>
+            </para>
+          </listItem>
+          <listItem>
+            <para>
+              <link xlink:href="e81afedb-0832-4b73-98c5-ea1f9926dce0"/>
+            </para>
+          </listItem>
+          <listItem>
+            <para>
+>>>>>>> update version list
               <link xlink:href="e8aceecf-d1b5-414d-abe7-f3a050c3001b"/>
             </para>
           </listItem>
