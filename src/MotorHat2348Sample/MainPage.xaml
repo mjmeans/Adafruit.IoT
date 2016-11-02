@@ -8,9 +8,33 @@
     mc:Ignorable="d">
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-        <Button x:Name="button" Content="Run stepper" HorizontalAlignment="Left" Margin="154,177,0,0" Height="120" Width="120" VerticalAlignment="Top" Click="button_Click"/>
-        <Button x:Name="button1" Content="Close program" HorizontalAlignment="Left" Margin="394,177,0,0" Height="120" Width="120" VerticalAlignment="Top" Click="button1_Click"/>
-        <TextBlock x:Name="textBlock" HorizontalAlignment="Left" Margin="154,366,0,0" TextWrapping="Wrap" Text="TextBlock" VerticalAlignment="Top" Width="202"/>
-
+        <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center" Padding="12">
+            <StackPanel Orientation="Vertical" Margin="12,0" >
+                <Button x:Name="button" HorizontalAlignment="Left" Height="120" VerticalAlignment="Top" Click="button_Click">
+                    <TextBlock TextWrapping="Wrap">
+                        Run
+                        <LineBreak/>
+                        stepper (channels 0,1)
+                        <LineBreak/>
+                        200 steps forward
+                    </TextBlock>
+                </Button>
+                <TextBlock x:Name="textBlock" HorizontalAlignment="Left" Text="Actual speed = {0} rpm" TextWrapping="Wrap" VerticalAlignment="Top"/>
+            </StackPanel>
+            <StackPanel Orientation="Vertical" Margin="12,0" >
+                <Button x:Name="button2" HorizontalAlignment="Left" Height="120" VerticalAlignment="Top" Click="button2_Click">
+                    <TextBlock>
+                        Start/stop
+                        <LineBreak/>
+                        DC motor (channel 3)
+                        <LineBreak/>
+                        forward &amp; backward
+                    </TextBlock>
+                </Button>
+                <TextBlock x:Name="textBlock1" HorizontalAlignment="Left" TextWrapping="Wrap" Text="Motor PWM speed" VerticalAlignment="Top"/>
+                <Slider x:Name="slider" HorizontalAlignment="Left" VerticalAlignment="Top" Width="100"/>
+            </StackPanel>
+            <Button x:Name="button1" Content="Close program" Margin="12,0" HorizontalAlignment="Left" Height="120" Width="120" VerticalAlignment="Top" Click="button1_Click"/>
+        </StackPanel>
     </Grid>
 </Page>

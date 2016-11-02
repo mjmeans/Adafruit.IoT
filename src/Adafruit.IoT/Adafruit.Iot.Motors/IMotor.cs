@@ -16,5 +16,19 @@
         /// The desired speed of the motor is used to calculate the delays between steps for a stepper motor or the duty cycle of the power supplied to a DC motor.
         /// </remarks>
         void SetSpeed(double rpm);
+<<<<<<< HEAD
+=======
+
+        /// <summary>
+        /// Run the motor continuously in the specified direction
+        /// </summary>
+        /// <param name="direction">A <see cref="Direction"/>.</param>
+        void Run(Direction direction);
+
+        /// <summary>
+        /// Stop the motor and cut its power.
+        /// </summary>
+        void Stop();
+>>>>>>> refs/remotes/origin/development
     }
 }

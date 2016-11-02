@@ -108,6 +108,11 @@
     <None Include="project.json" />
   </ItemGroup>
   <ItemGroup>
+<<<<<<< HEAD
+=======
+    <Compile Include="Adafruit.IoT.Devices\PCA9685ControllerProvider.cs" />
+    <Compile Include="Adafruit.Iot.Motors\MotorState.cs" />
+>>>>>>> refs/remotes/origin/development
     <Compile Include="Adafruit.Iot.Motors\PwmDCMotor.cs" />
     <Compile Include="Adafruit.Iot.Motors\Direction.cs" />
     <Compile Include="Adafruit.Iot.Motors\IMotor.cs" />
