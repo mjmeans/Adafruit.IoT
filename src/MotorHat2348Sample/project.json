@@ -1,11 +1,6 @@
 ﻿{
   "dependencies": {
-<<<<<<< HEAD
-    "Adafruit.IoT": "1.0.5",
-    "Microsoft.NETCore.UniversalWindowsPlatform": "5.0.0"
-=======
     "Microsoft.NETCore.UniversalWindowsPlatform": "5.1.0"
->>>>>>> refs/remotes/origin/development
   },
   "frameworks": {
     "uap10.0": {}

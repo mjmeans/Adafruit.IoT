@@ -77,22 +77,16 @@ namespace Adafruit.IoT.Motors
         /// <summary>
         /// Runs the motor in the specified direction.
         /// </summary>
-        /// <param name="command">A <see cref="Direction"/>.</param>
+        /// <param name="direction">A <see cref="Direction"/>.</param>
         /// <remarks>
         /// This method uses the previously value set using <see cref="SetSpeed(double)"/> to modulate the PWM power going to the motor.
         /// In order to change the speed of a running motor you must call this method again after calling <see cref="SetSpeed(double)"/>.
         /// </remarks>
-        public void Run(Direction command)
+        public void Run(Direction direction)
         {
             if (this._controller == null)
                 return;
 
-<<<<<<< HEAD
-            if (command == Direction.Forward)
-            {
-                this._IN2pin.Stop();
-                this._IN1pin.Start();
-=======
             if (this._IN1pin.IsStarted) this._IN1pin.Stop();
             if (this._IN2pin.IsStarted) this._IN2pin.Stop();
             switch (direction)
@@ -107,20 +101,7 @@ namespace Adafruit.IoT.Motors
                     break;
                 default:
                     throw new ArgumentException("direction");
->>>>>>> refs/remotes/origin/development
             }
-            else if (command == Direction.Backward)
-            {
-                this._IN1pin.Stop();
-                this._IN2pin.Start();
-            }
-            else if (command == Direction.Release)
-            {
-                this._IN1pin.Stop();
-                this._IN2pin.Stop();
-            }
-            else
-                throw new ArgumentException("command");
         }
 
         /// <summary>
@@ -143,20 +124,14 @@ namespace Adafruit.IoT.Motors
             if (rpm > 1)
                 rpm = 1;
             _speed = rpm;
+        }
 
-<<<<<<< HEAD
-
-            if (_IN1pin.IsStarted) { this._IN1pin.SetActiveDutyCyclePercentage(_speed); }
-
-            if (_IN2pin.IsStarted) { this._IN2pin.SetActiveDutyCyclePercentage(_speed); }
-=======
         /// <inheritdoc/>
         public void Stop()
         {
             this._IN1pin.Stop();
             this._IN2pin.Stop();
             this._PWMpin.SetActiveDutyCyclePercentage(0);
->>>>>>> refs/remotes/origin/development
         }
 
         #region IDisposable Support

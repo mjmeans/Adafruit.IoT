@@ -4,16 +4,10 @@
         <name>Adafruit.IoT</name>
     </assembly>
     <members>
-<<<<<<< HEAD
-        <member name="T:Adafruit.IoT.Motors.PwmDCMotor">
-            <summary>
-            Represents a DC Motor connected to a PWM controller.
-=======
         <member name="T:Adafruit.IoT.Devices.Pwm.PCA9685ControllerProvider">
             <summary>
             Internal driver for the PCA9685 used on the <see href="http://www.adafruit.com/products/815">
             Adafruit 16-Channel 12-bit PWM/Servo Driver</see> and others.
->>>>>>> refs/remotes/origin/development
             </summary>
             <remarks>
             <para>
@@ -31,31 +25,11 @@
             <summary>
             PCA9685 register addresses
             </summary>
-<<<<<<< HEAD
-            <param name="command">A <see cref="T:Adafruit.IoT.Motors.Direction" />.</param>
-            <remarks>
-            This method uses the previously value set using <see cref="M:Adafruit.IoT.Motors.PwmDCMotor.SetSpeed(System.Double)" /> to modulate the PWM power going to the motor.
-            In order to change the speed of a running motor you must call this method again after calling <see cref="M:Adafruit.IoT.Motors.PwmDCMotor.SetSpeed(System.Double)" />.
-            </remarks>
-=======
->>>>>>> refs/remotes/origin/development
         </member>
         <member name="T:Adafruit.IoT.Devices.Pwm.PCA9685ControllerProvider.Mode1Flags">
             <summary>
             PCA9685 mode 1 register flags
             </summary>
-<<<<<<< HEAD
-            <param name="rpm">The duty cycle of the PWM controller in the range of 0.0 to 1.0.</param>
-            <remarks>
-            <note type="note">
-            Although this method has a parameter called rpm, this parameter actually sets the duty cycle of the PWM controller that powers the motor.
-            </note>
-            <remarks>
-            This method sets the value used to modulate the PWM power going to the motor.
-            In order to change the speed of a running motor you must call this method and then call <see cref="M:Adafruit.IoT.Motors.PwmDCMotor.Run(Adafruit.IoT.Motors.Direction)" /> again.
-            </remarks>
-            </remarks>
-=======
         </member>
         <member name="T:Adafruit.IoT.Devices.Pwm.PCA9685ControllerProvider.Mode2Flags">
             <summary>
@@ -68,7 +42,6 @@
             </summary>
             <param name="pin"></param>
             <param name="state">0=low, 1=high, -1=pwm</param>
->>>>>>> refs/remotes/origin/development
         </member>
         <member name="M:Adafruit.IoT.Devices.Pwm.PCA9685ControllerProvider.Windows#Devices#Pwm#Provider#IPwmControllerProvider#AcquirePin(System.Int32)">
             <inheritdoc />
@@ -79,17 +52,6 @@
         <member name="M:Adafruit.IoT.Devices.Pwm.PCA9685ControllerProvider.Windows#Devices#Pwm#Provider#IPwmControllerProvider#EnablePin(System.Int32)">
             <inheritdoc />
         </member>
-<<<<<<< HEAD
-        <member name="T:Adafruit.IoT.Motors.PwmStepperMotor">
-            <summary>
-            Represents a stepper motor connected to a PWM controller.
-            </summary>
-            <remarks>
-            This class supports <see cref="T:Adafruit.IoT.Motors.SteppingStyle" /> settings
-            <see cref="F:Adafruit.IoT.Motors.SteppingStyle.Full" />, <see cref="F:Adafruit.IoT.Motors.SteppingStyle.Half" />,
-            <see cref="F:Adafruit.IoT.Motors.SteppingStyle.Wave" /> and <see cref="F:Adafruit.IoT.Motors.SteppingStyle.Microstep8" />.
-            </remarks>
-=======
         <member name="M:Adafruit.IoT.Devices.Pwm.PCA9685ControllerProvider.Windows#Devices#Pwm#Provider#IPwmControllerProvider#ReleasePin(System.Int32)">
             <inheritdoc />
         </member>
@@ -101,7 +63,6 @@
         </member>
         <member name="P:Adafruit.IoT.Devices.Pwm.PCA9685ControllerProvider.Windows#Devices#Pwm#Provider#IPwmControllerProvider#ActualFrequency">
             <inheritdoc />
->>>>>>> refs/remotes/origin/development
         </member>
         <member name="P:Adafruit.IoT.Devices.Pwm.PCA9685ControllerProvider.Windows#Devices#Pwm#Provider#IPwmControllerProvider#MaxFrequency">
             <inheritdoc />
@@ -112,34 +73,14 @@
         <member name="P:Adafruit.IoT.Devices.Pwm.PCA9685ControllerProvider.Windows#Devices#Pwm#Provider#IPwmControllerProvider#PinCount">
             <inheritdoc />
         </member>
-<<<<<<< HEAD
-        <member name="M:Adafruit.IoT.Motors.PwmStepperMotor.StepAsync(System.Int32,Adafruit.IoT.Motors.Direction,Adafruit.IoT.Motors.SteppingStyle)">
-            <summary>
-            Steps a specified number of steps, direction and stepping style.
-            </summary>
-            <param name="steps">The number of steps to process.</param>
-            <param name="direction">A <see cref="T:Adafruit.IoT.Motors.Direction" />.</param>
-            <param name="stepStyle">A <see cref="T:Adafruit.IoT.Motors.SteppingStyle" />.</param>
-            <remarks>
-            .
-            </remarks>
-=======
         <member name="M:Adafruit.IoT.Devices.Pwm.PCA9685ControllerProvider.Dispose">
             <inheritdoc />
->>>>>>> refs/remotes/origin/development
         </member>
         <member name="T:Adafruit.IoT.Devices.Pwm.PCA9685Provider">
             <summary>
             Driver for the PCA9685 used on the <see href="http://www.adafruit.com/products/815">
             Adafruit 16-Channel 12-bit PWM/Servo Driver</see> and others.
             </summary>
-<<<<<<< HEAD
-            <param name="steps">The number of steps to step the motor.</param>
-            <param name="direction">A <see cref="T:Adafruit.IoT.Motors.Direction" />.</param>
-            <param name="stepStyle">A <see cref="T:Adafruit.IoT.Motors.SteppingStyle" />.</param>
-            <returns>The current step number.</returns>
-=======
->>>>>>> refs/remotes/origin/development
             <remarks>
             <para>
             Create an instance of this class and pass it to the
@@ -183,9 +124,6 @@
             </para>
             </remarks>
         </member>
-<<<<<<< HEAD
-        <member name="P:Adafruit.IoT.Motors.PwmStepperMotor.PowerFactor">
-=======
         <member name="P:Adafruit.IoT.Devices.Pwm.PCA9685Provider.Address">
             <summary>
             Gets or sets the I2C address of the controller.
@@ -195,7 +133,6 @@
             </value>
         </member>
         <member name="P:Adafruit.IoT.Devices.Pwm.PCA9685Provider.ControllerName">
->>>>>>> refs/remotes/origin/development
             <summary>
             Gets or sets the name of the I2C controller to use.
             </summary>

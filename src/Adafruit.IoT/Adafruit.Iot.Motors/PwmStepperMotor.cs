@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Threading;
 using System.Threading.Tasks;
 using Windows.Foundation;
 using Windows.System.Threading;
@@ -21,7 +22,7 @@ namespace Adafruit.IoT.Motors
     public sealed class PwmStepperMotor : IMotor, IDisposable
     {
         private byte _MICROSTEPS = 8;
-        private double[] _MICROSTEP_CURVE = new double[] 
+        private double[] _MICROSTEP_CURVE = new double[]
         {
             0,
             0.195090322,
@@ -38,8 +39,8 @@ namespace Adafruit.IoT.Motors
         // MICROSTEPS = 16
         // a sinusoidal curve NOT LINEAR!
         // MICROSTEP_CURVE = [0, 25, 50, 74, 98, 120, 141, 162, 180, 197, 212, 225, 236, 244, 250, 253, 255]
-        
-        private double _powerLevel = 1;           // Set to 1.0 to drive the stepper motor at full power/turque
+
+        private double _powerLevel = 1;           // Set to 1.0 to drive the stepper motor at full power/torque
 
         private Windows.Devices.Pwm.PwmPin _PWMA;
         private Windows.Devices.Pwm.PwmPin _PWMB;
@@ -55,12 +56,9 @@ namespace Adafruit.IoT.Motors
         private int[] _currentcoils = { 0, 0, 0, 0 };
         private Windows.Devices.Pwm.PwmPin[] _coilpins;
 
-<<<<<<< HEAD
-=======
         SteppingStyle _stepStyle;
         private MotorState _stepAsyncState;
 
->>>>>>> refs/remotes/origin/development
         /// <summary>
         /// Initializes a new <see cref="PwmStepperMotor"/> instance.
         /// </summary>
@@ -85,7 +83,7 @@ namespace Adafruit.IoT.Motors
             this._MICROSTEPS = 8;
             var m = new List<double>();
             for (int i = 0; i <= _MICROSTEPS; i++)
-                m.Add(Math.Sin(Math.PI/180*90*i/this._MICROSTEPS));
+                m.Add(Math.Sin(Math.PI / 180 * 90 * i / this._MICROSTEPS));
             this._MICROSTEP_CURVE = m.ToArray();
 
             int pwmapin, ain1pin, ain2pin;
@@ -153,7 +151,7 @@ namespace Adafruit.IoT.Motors
             this._AIN2.Start();
             this._BIN1.Start();
             this._BIN2.Start();
-            _coilpins = new Windows.Devices.Pwm.PwmPin[] 
+            _coilpins = new Windows.Devices.Pwm.PwmPin[]
             {
                 this._AIN2,
                 this._BIN1,
@@ -187,6 +185,7 @@ namespace Adafruit.IoT.Motors
         {
             double pwm_a, pwm_b;
             int[] coils;
+            _stepStyle = stepStyle;
 
             pwm_a = pwm_b = 1;
 
@@ -337,15 +336,10 @@ namespace Adafruit.IoT.Motors
         /// <param name="direction">A <see cref="Direction"/>.</param>
         /// <param name="stepStyle">A <see cref="SteppingStyle"/>.</param>
         /// <remarks>
-        /// .
+        /// StepAsync cannot be called if the motor is already running.
         /// </remarks>
         public IAsyncAction StepAsync(int steps, Direction direction, SteppingStyle stepStyle)
         {
-<<<<<<< HEAD
-            return StepAsyncInternal(steps, direction, stepStyle).AsAsyncAction();
-        }
-
-=======
             if (_stepAsyncState == MotorState.Run)
                 throw new InvalidOperationException("Stepper motor is already running.");
 
@@ -360,7 +354,6 @@ namespace Adafruit.IoT.Motors
 
         CancellationTokenSource cts;
 
->>>>>>> refs/remotes/origin/development
         /// <summary>
         /// Async method to step the motor multiple steps.
         /// </summary>
@@ -374,11 +367,9 @@ namespace Adafruit.IoT.Motors
         /// </remarks>
         internal void motorThread(int steps, Direction direction, SteppingStyle stepStyle, CancellationToken ct)
         {
-<<<<<<< HEAD
-=======
             _stepAsyncState = MotorState.Run;
->>>>>>> refs/remotes/origin/development
             double s_per_s;
+            int _steps = steps;
             int lateststep = 0;
 
             var watch = System.Diagnostics.Stopwatch.StartNew();
@@ -387,42 +378,26 @@ namespace Adafruit.IoT.Motors
             if (stepStyle == SteppingStyle.Half)
             {
                 s_per_s /= 2.0;
-                steps *= 2;
+                _steps *= 2;
             }
             if (stepStyle == SteppingStyle.Microstep8)
             {
                 s_per_s /= this._MICROSTEPS;
-                steps *= this._MICROSTEPS;
+                _steps *= this._MICROSTEPS;
             }
             long ticksperstep = (long)(s_per_s * Stopwatch.Frequency);
             long nexttime = 0;
-            for (int s=0; s<steps; s++)
+            int s = 0;
+            try
             {
-                lateststep = this.OneStep(direction, stepStyle);
-                nexttime += ticksperstep;
-                await Task.Run(() =>
-                {
-                    while (watch.ElapsedTicks < ticksperstep)
-                    { }
-                });
-            }
-            if (stepStyle == SteppingStyle.Microstep8)
-            {
-                // Always end in full step
-                while ((lateststep != 0) && (lateststep != this._MICROSTEPS))
+                while ((s < _steps) || (steps == -1))
                 {
                     if (ct.IsCancellationRequested) break;
                     lateststep = this.OneStep(direction, stepStyle);
+                    if (_steps != -1) s++;
                     nexttime += ticksperstep;
                     while (watch.ElapsedTicks < nexttime)
                     {
-<<<<<<< HEAD
-                        while (watch.ElapsedTicks < ticksperstep)
-                        { }
-                    });
-                }
-            }
-=======
                         if (ct.IsCancellationRequested) break;
                     }
                 }
@@ -508,7 +483,6 @@ namespace Adafruit.IoT.Motors
                 });
                 cts = null;
             }
->>>>>>> refs/remotes/origin/development
         }
 
         #region IDisposable Support

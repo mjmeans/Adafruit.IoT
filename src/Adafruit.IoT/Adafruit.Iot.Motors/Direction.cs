@@ -18,10 +18,6 @@
         /// <summary>
         /// Motor will turn in the backward direction.
         /// </summary>
-        Backward = 2,
-        /// <summary>
-        /// DC motor is 'off', not spinning but will also not hold its place
-        /// </summary>
-        Release = 3
+        Backward = 2
     }
 }
