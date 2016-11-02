@@ -106,7 +106,7 @@
   <PropertyGroup>
     <PreBuildEvent>
     </PreBuildEvent>
-    <PostBuildEvent>if exist "$(SolutionDir)..\doc" rmdir /s /q "$(SolutionDir)..\doc"
+    <PostBuildEvent>if exist "$(SolutionDir)..\doc\*.*" rmdir /s /q "$(SolutionDir)..\doc"
 xcopy ".\Help\*.*" "..\..\doc\" /s/q
 rmdir /s /q ".\Help"
 </PostBuildEvent>

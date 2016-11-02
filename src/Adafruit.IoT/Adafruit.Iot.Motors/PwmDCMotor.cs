@@ -66,6 +66,7 @@ namespace Adafruit.IoT.Motors
                 throw new MotorHatException("MotorHat Motor must be between 1 and 4 inclusive");
 
             this._PWMpin = this._controller.OpenPin(pwm);
+            this._PWMpin.Start();
 
             this._IN1pin = this._controller.OpenPin(in1);
             this._IN1pin.SetActiveDutyCyclePercentage(1);
@@ -89,14 +90,13 @@ namespace Adafruit.IoT.Motors
 
             if (this._IN1pin.IsStarted) this._IN1pin.Stop();
             if (this._IN2pin.IsStarted) this._IN2pin.Stop();
+            this._PWMpin.SetActiveDutyCyclePercentage(_speed);
             switch (direction)
             {
                 case Direction.Forward:
-                    this._PWMpin.SetActiveDutyCyclePercentage(_speed);
                     this._IN1pin.Start();
                     break;
                 case Direction.Backward:
-                    this._PWMpin.SetActiveDutyCyclePercentage(_speed);
                     this._IN2pin.Start();
                     break;
                 default:
