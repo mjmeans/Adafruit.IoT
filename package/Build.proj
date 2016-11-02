@@ -19,21 +19,6 @@
         <BuildDir></BuildDir>
         <OutDir>lib\uap10.0</OutDir>
       </Architecture>
-      <!--<Architecture Include="ARM">
-        <BuildName>ARM</BuildName>
-        <BuildDir>ARM</BuildDir>
-        <OutDir>runtime\win10-arm\lib</OutDir>
-      </Architecture>
-      <Architecture Include="x86">
-        <BuildName>x86</BuildName>
-        <BuildDir>x86</BuildDir>
-        <OutDir>runtime\win10-x86\lib</OutDir>
-      </Architecture>
-      <Architecture Include="x64">
-        <BuildName>x64</BuildName>
-        <BuildDir>x64</BuildDir>
-        <OutDir>runtime\win10-x64\lib</OutDir>
-      </Architecture>-->
     </ItemGroup>
 
     <!-- Define Projects to Build -->
@@ -84,6 +69,10 @@
     <!-- Making sure output dir exists -->
     <MakeDir Directories="$(OutDir)" />
     
+    <!-- Copy to lib folder -->
+    <Message Text="Copying library" Importance="high"/>
+    <Copy SourceFiles="@(BinFiles)" DestinationFolder="..\lib\$(ProjectName)" Condition="Exists('%(FullPath)')"/>
+
     <!-- Copy to Nuget package folder -->
     <Message Text="Copying output files to $(OutDir)"  Importance="high"/>
     <Copy SourceFiles="@(BinFiles)" DestinationFolder="$(OutDir)" Condition="Exists('%(FullPath)')"/>

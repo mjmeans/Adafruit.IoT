@@ -11,11 +11,11 @@ namespace Adafruit.IoT.Motors
     /// </remarks>
     public sealed class PwmDCMotor : IMotor, IDisposable
     {
+        private Windows.Devices.Pwm.PwmController _controller;
+        private Windows.Devices.Pwm.PwmPin _PWMpin;
         private Windows.Devices.Pwm.PwmPin _IN1pin;
         private Windows.Devices.Pwm.PwmPin _IN2pin;
-        private Windows.Devices.Pwm.PwmController _controller;
         private byte _motorNum;
-        private Windows.Devices.Pwm.PwmPin _PWMpin;
         private double _speed;
 
         /// <summary>
@@ -27,27 +27,36 @@ namespace Adafruit.IoT.Motors
         {
             this._controller = controller;
             this._motorNum = driver;
+
+            // The PCA9685 PWM controller is used to control the inputs of two TB6612FNG dual motor drivers, "IC1" and "IC3".
+            // Each TB6612FNG has two motor drivers. So we have motor driver circuits of IC1a, IC1b, IC3a and IC3b.
+            // These correspond to motor hat screw terminals M1, M2, M3 and M4.
+            // Each driver circuit ("IC1a", etc.) has one PWM pin and two IN pins.
+            // The PWM pin expects a PWM input signal. The two IN pins expect a logic 0 or 1 input signal.
+            // The variables pwm, in1 and in2 variables identify which PCA9685 PWM output pins will be used to drive this PwmDCMotor.
+            // The pwm variable identifies which PCA9685 output pin is used to drive the xPWM input on the TB6612FNG.
+            // And the in1 and in2 variables are used to specify which PCA9685 output pins are used to drive the xIN1 and xIN2 input pins of the TB6612FNG.
             byte pwm, in1, in2 = 0;
 
-            if (driver == 0)
+            if (driver == 1)
             {
                 pwm = 8;
                 in2 = 9;
                 in1 = 10;
             }
-            else if (driver == 1)
+            else if (driver == 2)
             {
                 pwm = 13;
                 in2 = 12;
                 in1 = 11;
             }
-            else if (driver == 2)
+            else if (driver == 3)
             {
                 pwm = 2;
                 in2 = 3;
                 in1 = 4;
             }
-            else if (driver == 3)
+            else if (driver == 4)
             {
                 pwm = 7;
                 in2 = 6;
@@ -57,37 +66,42 @@ namespace Adafruit.IoT.Motors
                 throw new MotorHatException("MotorHat Motor must be between 1 and 4 inclusive");
 
             this._PWMpin = this._controller.OpenPin(pwm);
+            this._PWMpin.Start();
+
             this._IN1pin = this._controller.OpenPin(in1);
+            this._IN1pin.SetActiveDutyCyclePercentage(1);
+
             this._IN2pin = this._controller.OpenPin(in2);
+            this._IN2pin.SetActiveDutyCyclePercentage(1);
         }
 
         /// <summary>
         /// Runs the motor in the specified direction.
         /// </summary>
-        /// <param name="command">A <see cref="Direction"/>.</param>
+        /// <param name="direction">A <see cref="Direction"/>.</param>
         /// <remarks>
         /// This method uses the previously value set using <see cref="SetSpeed(double)"/> to modulate the PWM power going to the motor.
         /// In order to change the speed of a running motor you must call this method again after calling <see cref="SetSpeed(double)"/>.
         /// </remarks>
-        public void Run(Direction command)
+        public void Run(Direction direction)
         {
             if (this._controller == null)
                 return;
 
-            if (command == Direction.Forward)
+            if (this._IN1pin.IsStarted) this._IN1pin.Stop();
+            if (this._IN2pin.IsStarted) this._IN2pin.Stop();
+            this._PWMpin.SetActiveDutyCyclePercentage(_speed);
+            switch (direction)
             {
-                this._PWMpin.SetActiveDutyCyclePercentage(_speed);
-                this._IN2pin.Stop();
-                this._IN1pin.Start();
+                case Direction.Forward:
+                    this._IN1pin.Start();
+                    break;
+                case Direction.Backward:
+                    this._IN2pin.Start();
+                    break;
+                default:
+                    throw new ArgumentException("direction");
             }
-            else if (command == Direction.Backward)
-            {
-                this._PWMpin.SetActiveDutyCyclePercentage(_speed);
-                this._IN1pin.Stop();
-                this._IN2pin.Start();
-            }
-            else
-                throw new ArgumentException("command");
         }
 
         /// <summary>
@@ -110,6 +124,14 @@ namespace Adafruit.IoT.Motors
             if (rpm > 1)
                 rpm = 1;
             _speed = rpm;
+        }
+
+        /// <inheritdoc/>
+        public void Stop()
+        {
+            this._IN1pin.Stop();
+            this._IN2pin.Stop();
+            this._PWMpin.SetActiveDutyCyclePercentage(0);
         }
 
         #region IDisposable Support

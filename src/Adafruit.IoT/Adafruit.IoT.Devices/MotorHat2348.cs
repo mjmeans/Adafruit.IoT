@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Adafruit.IoT.Devices.Pwm;
 using Adafruit.IoT.Motors;
@@ -45,8 +46,8 @@ namespace Adafruit.IoT.Devices
     ///            await stepper.StepAsync(200, Direction.Forward, SteppingStyle.Half);
     ///
     ///            // Activate the pin and set it to 50% duty cycle
-    ///            pwm.Start();
     ///            pwm.SetActiveDutyCyclePercentage(0.5);
+    ///            pwm.Start();
     ///
     ///            // for demonstration purposes we will wait 10 seconds to observe the PWM and motor operation.
     ///            await Task.Delay(10000);
@@ -124,6 +125,16 @@ namespace Adafruit.IoT.Devices
             }).Wait();
         }
 
+        private async Task EnsureInitializedAsync()
+        {
+            if (isInitialized) return;
+            var provider = new PCA9685Provider(this._i2caddr);
+            this._pwm = (await Windows.Devices.Pwm.PwmController.GetControllersAsync(provider)).FirstOrDefault();
+            if (this._frequency > this._pwm.MaxFrequency) this._frequency = this._pwm.MaxFrequency;
+            this._pwm.SetDesiredFrequency(this._frequency);
+            isInitialized = true;
+        }
+
         /// <summary>
         /// Creates a <see cref="PwmDCMotor"/>  object for the specified channel and adds it to the list of Motors.
         /// </summary>
@@ -135,15 +146,15 @@ namespace Adafruit.IoT.Devices
         public PwmDCMotor CreateDCMotor(byte driverChannel)
         {
             PwmDCMotor value;
-
+            var actualDriverChannel = driverChannel - 1;
             if ((driverChannel < 1) || (driverChannel > 4))
                 throw new InvalidOperationException("CreateDCMotor parameter 'driverChannel' must be between 1 and 4.");
-            if (motorChannelsUsed[driverChannel - 1] == true)
+            if (motorChannelsUsed[actualDriverChannel] == true)
                 throw new MotorHatException(string.Format("Channel {0} aleady in assigned.", driverChannel));
-            EnsureInitialized();
+            Microsoft.IoT.DeviceHelpers.TaskExtensions.UISafeWait(EnsureInitializedAsync);
 
-            value = new PwmDCMotor(this._pwm, driverChannel);
-            motorChannelsUsed[driverChannel - 1] = true;
+            value = new PwmDCMotor(this._pwm, (byte)driverChannel);
+            motorChannelsUsed[actualDriverChannel] = true;
             motors.Add(value);
 
             return value;
@@ -174,7 +185,7 @@ namespace Adafruit.IoT.Devices
                 throw new MotorHatException(string.Format("Channel {0} is already assigned.", driverChannelA));
             if (motorChannelsUsed[driverChannelB - 1] == true)
                 throw new MotorHatException(string.Format("Channel {0} is already assigned.", driverChannelB));
-            EnsureInitialized();
+            Microsoft.IoT.DeviceHelpers.TaskExtensions.UISafeWait(EnsureInitializedAsync);
 
             value = new PwmStepperMotor(this._pwm, driverChannelA, driverChannelB, steps);
             motorChannelsUsed[driverChannelA - 1] = true;
@@ -197,7 +208,7 @@ namespace Adafruit.IoT.Devices
 
             if ((channel < 1) || (channel > 4))
                 throw new ArgumentOutOfRangeException("channel");
-            EnsureInitialized();
+            Microsoft.IoT.DeviceHelpers.TaskExtensions.UISafeWait(EnsureInitializedAsync);
 
             switch (channel)
             {
@@ -235,7 +246,7 @@ namespace Adafruit.IoT.Devices
         {
             get
             {
-                EnsureInitialized();
+                Microsoft.IoT.DeviceHelpers.TaskExtensions.UISafeWait(EnsureInitializedAsync);
                 return this.motors;
             }
         }
@@ -253,7 +264,7 @@ namespace Adafruit.IoT.Devices
         {
             get
             {
-                EnsureInitialized();
+                Microsoft.IoT.DeviceHelpers.TaskExtensions.UISafeWait(EnsureInitializedAsync);
                 return this.pins;
             }
         }
