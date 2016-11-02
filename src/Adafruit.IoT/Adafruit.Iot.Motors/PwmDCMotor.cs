@@ -66,17 +66,12 @@ namespace Adafruit.IoT.Motors
                 throw new MotorHatException("MotorHat Motor must be between 1 and 4 inclusive");
 
             this._PWMpin = this._controller.OpenPin(pwm);
-            this._PWMpin.Start();
 
             this._IN1pin = this._controller.OpenPin(in1);
             this._IN1pin.SetActiveDutyCyclePercentage(1);
-            this._IN1pin.Polarity = Windows.Devices.Pwm.PwmPulsePolarity.ActiveLow;
-            this._IN1pin.Start();
 
             this._IN2pin = this._controller.OpenPin(in2);
             this._IN2pin.SetActiveDutyCyclePercentage(1);
-            this._IN2pin.Polarity = Windows.Devices.Pwm.PwmPulsePolarity.ActiveLow;
-            this._IN2pin.Start();
         }
 
         /// <summary>
@@ -92,17 +87,17 @@ namespace Adafruit.IoT.Motors
             if (this._controller == null)
                 return;
 
+            if (this._IN1pin.IsStarted) this._IN1pin.Stop();
+            if (this._IN2pin.IsStarted) this._IN2pin.Stop();
             switch (direction)
             {
                 case Direction.Forward:
                     this._PWMpin.SetActiveDutyCyclePercentage(_speed);
-                    this._IN2pin.Polarity = Windows.Devices.Pwm.PwmPulsePolarity.ActiveLow;
-                    this._IN1pin.Polarity = Windows.Devices.Pwm.PwmPulsePolarity.ActiveHigh;
+                    this._IN1pin.Start();
                     break;
                 case Direction.Backward:
                     this._PWMpin.SetActiveDutyCyclePercentage(_speed);
-                    this._IN1pin.Polarity = Windows.Devices.Pwm.PwmPulsePolarity.ActiveLow;
-                    this._IN2pin.Polarity = Windows.Devices.Pwm.PwmPulsePolarity.ActiveHigh;
+                    this._IN2pin.Start();
                     break;
                 default:
                     throw new ArgumentException("direction");
@@ -134,9 +129,9 @@ namespace Adafruit.IoT.Motors
         /// <inheritdoc/>
         public void Stop()
         {
-            this._PWMpin.SetActiveDutyCyclePercentage(0);
             this._IN1pin.Stop();
             this._IN2pin.Stop();
+            this._PWMpin.SetActiveDutyCyclePercentage(0);
         }
 
         #region IDisposable Support

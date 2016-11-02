@@ -396,7 +396,8 @@ namespace Adafruit.IoT.Motors
                     lateststep = this.OneStep(direction, stepStyle);
                     if (_steps != -1) s++;
                     nexttime += ticksperstep;
-                    while (watch.ElapsedTicks < nexttime) {
+                    while (watch.ElapsedTicks < nexttime)
+                    {
                         if (ct.IsCancellationRequested) break;
                     }
                 }
@@ -447,7 +448,9 @@ namespace Adafruit.IoT.Motors
             Microsoft.IoT.DeviceHelpers.TaskExtensions.UISafeWait(cancelRun);
 
             // Do not await, this should continue running
-            StepAsync(-1, direction, _stepStyle);
+            Task.Run(() => StepAsync(-1, direction, _stepStyle))
+                .ContinueWith(t => { throw t.Exception; }, 
+                TaskContinuationOptions.OnlyOnFaulted);
         }
 
         /// <summary>
@@ -476,7 +479,7 @@ namespace Adafruit.IoT.Motors
                 cts.Cancel();
                 await Task.Run(() =>
                 {
-                    while (_runTask.Status ==  AsyncStatus.Started) { };
+                    while (_runTask.Status == AsyncStatus.Started) { };
                 });
                 cts = null;
             }
@@ -515,32 +518,38 @@ namespace Adafruit.IoT.Motors
                 if (disposing)
                 {
                     // Dispose the opened pins so that they are released
-                    if (this._PWMA != null) {
+                    if (this._PWMA != null)
+                    {
                         if (this._PWMA.IsStarted) this._PWMA.Stop();
                         this._PWMA.Dispose();
                         this._PWMA = null;
                     }
-                    if (this._PWMB != null) {
+                    if (this._PWMB != null)
+                    {
                         if (this._PWMB.IsStarted) this._PWMB.Stop();
                         this._PWMB.Dispose();
                         this._PWMB = null;
                     }
-                    if (this._AIN1 != null) {
+                    if (this._AIN1 != null)
+                    {
                         if (this._AIN1.IsStarted) this._AIN1.Stop();
                         this._AIN1.Dispose();
                         this._AIN1 = null;
                     }
-                    if (this._AIN2 != null) {
+                    if (this._AIN2 != null)
+                    {
                         if (this._AIN2.IsStarted) this._AIN2.Stop();
                         this._AIN2.Dispose();
                         this._AIN2 = null;
                     }
-                    if (this._BIN1 != null) {
+                    if (this._BIN1 != null)
+                    {
                         if (this._BIN1.IsStarted) this._BIN1.Stop();
                         this._BIN1.Dispose();
                         this._BIN1 = null;
                     }
-                    if (this._BIN2 != null) {
+                    if (this._BIN2 != null)
+                    {
                         if (this._BIN2.IsStarted) this._BIN2.Stop();
                         this._BIN2.Dispose();
                         this._BIN2 = null;
