@@ -329,13 +329,31 @@ namespace Adafruit.IoT.Motors
         }
 
         /// <summary>
-        /// Steps a specified number of steps and direction.
+        /// Steps the motor a specified number of steps in the direction and style specified.
+        /// </summary>
+        /// <param name="steps">The number of steps to process.</param>
+        /// <param name="direction">A <see cref="Direction"/>.</param>
+        /// <param name="stepStyle">A <see cref="SteppingStyle"/>.</param>
+        /// <remarks>
+        /// StepAsync cannot be called if the motor is already running.
+        /// </remarks>
+        /// <returns>An <see cref="IAsyncAction"/></returns>
+        [Obsolete("Use SetStepStyle(SteppingStyle); StepAsync(double, Direction); instead.")]
+        public IAsyncAction StepAsync(double steps, Direction direction, SteppingStyle stepStyle)
+        {
+            SetStepStyle(stepStyle);
+            return StepAsync(steps, direction);
+        }
+
+        /// <summary>
+        /// Steps the motor a specified number of steps in the direction specified.
         /// </summary>
         /// <param name="steps">The number of steps to process.</param>
         /// <param name="direction">A <see cref="Direction"/>.</param>
         /// <remarks>
         /// StepAsync cannot be called if the motor is already running.
         /// </remarks>
+        /// <returns>An <see cref="IAsyncAction"/></returns>
         public IAsyncAction StepAsync(double steps, Direction direction)
         {
             if (_stepAsyncState == MotorState.Run)
@@ -453,7 +471,7 @@ namespace Adafruit.IoT.Motors
         }
 
         /// <summary>
-        /// Stop the stepper motor but keeps the stepper drivers energized.
+        /// Stop the stepper motor but keep the stepper drivers energized.
         /// </summary>
         public void Brake()
         {
