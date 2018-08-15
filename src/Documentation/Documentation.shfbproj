@@ -38,7 +38,7 @@
     <HelpFileVersion>1.0.6.0</HelpFileVersion>
     <MaximumGroupParts>2</MaximumGroupParts>
     <NamespaceGrouping>False</NamespaceGrouping>
-    <SyntaxFilters>C#, Visual Basic, Managed C++</SyntaxFilters>
+    <SyntaxFilters>C#, Visual Basic</SyntaxFilters>
     <SdkLinkTarget>Blank</SdkLinkTarget>
     <RootNamespaceContainer>False</RootNamespaceContainer>
     <PresentationStyle>VS2013</PresentationStyle>
