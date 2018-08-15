@@ -17,30 +17,118 @@ namespace Adafruit.IoT.Motors
     /// <remarks>
     /// This class supports <see cref="SteppingStyle"/> settings
     /// <see cref="SteppingStyle.Full"/>, <see cref="SteppingStyle.Half"/>,
-    /// <see cref="SteppingStyle.Wave"/> and <see cref="SteppingStyle.Microstep8"/>.
+    /// <see cref="SteppingStyle.FullWave"/>, <see cref="SteppingStyle.HalfWave"/>,
+    /// <see cref="SteppingStyle.Microstep4"/>, <see cref="SteppingStyle.Microstep8"/>,
+    /// <see cref="SteppingStyle.Microstep16"/> and <see cref="SteppingStyle.Microstep32"/>.
     /// </remarks>
     public sealed class PwmStepperMotor : IMotor, IDisposable
     {
-        private byte _MICROSTEPS = 8;
-        private double[] _MICROSTEP_CURVE = new double[]
-        {
-            0,
-            0.195090322,
-            0.382683432,
-            0.555570233,
-            0.707106781,
-            0.831469612,
-            0.923879533,
-            0.98078528,
-            1
-            // 0, 50, 98, 142, 180, 212, 236, 250, 255
-        };
+        private MotorCoil[] _stepTable;
+        private SteppingStyle _stepStyle;
+        private MotorState _stepAsyncState;
+        private double _last_pwm_a, _last_pwm_b;
+        private int _last_sign_a, _last_sign_b;
+        private IAsyncAction _runTask;
 
-        // MICROSTEPS = 16
-        // a sinusoidal curve NOT LINEAR!
-        // MICROSTEP_CURVE = [0, 25, 50, 74, 98, 120, 141, 162, 180, 197, 212, 225, 236, 244, 250, 253, 255]
+        private class MotorCoil
+        {
+            public double Ia, Ib;
+            public MotorCoil(double Ia, double Ib)
+            {
+                this.Ia = Ia;
+                this.Ib = Ib;
+            }
+        }
+
+        // Various step tables are documetned here http://www.lamja.com/?p=140
+        private MotorCoil[] BuildStepTable(SteppingStyle stepStyle)
+        {
+            int steps = 0;
+            double offset = 0;
+            List<MotorCoil> stepTable = new List<MotorCoil>();
+            Debug.WriteLine(stepStyle);
+
+            switch (stepStyle)
+            {
+                case SteppingStyle.Full:
+                    steps = 1;
+                    stepTable.Add(new MotorCoil( 1,  1));
+                    stepTable.Add(new MotorCoil( 1, -1));
+                    stepTable.Add(new MotorCoil(-1, -1));
+                    stepTable.Add(new MotorCoil(-1,  1));
+                    break;
+                case SteppingStyle.Half:
+                    steps = 1;
+                    stepTable.Add(new MotorCoil( 0,  1));
+                    stepTable.Add(new MotorCoil( 1,  1));
+                    stepTable.Add(new MotorCoil( 1,  0));
+                    stepTable.Add(new MotorCoil( 1, -1));
+                    stepTable.Add(new MotorCoil( 0, -1));
+                    stepTable.Add(new MotorCoil(-1, -1));
+                    stepTable.Add(new MotorCoil(-1,  0));
+                    stepTable.Add(new MotorCoil(-1,  1));
+                    break;
+                case SteppingStyle.FullWave:
+                    steps = 1;
+                    break;
+                case SteppingStyle.HalfWave:
+                    steps = 2;
+                    break;
+                case SteppingStyle.Microstep4:
+                    steps = 4;
+                    break;
+                case SteppingStyle.Microstep8:
+                    steps = 8;
+                    break;
+                case SteppingStyle.Microstep16:
+                    steps = 16;
+                    break;
+                case SteppingStyle.Microstep32:
+                    steps = 32;
+                    break;
+            }
+
+            if (stepTable.Count == 0)
+            {
+                // Calculate microsteps
+                for (double i = 0; i < steps * 4; i++)
+                {
+                    var deg = (i / steps);
+                    var phase_a = Math.Sin((Math.PI / 2.0 * (deg + offset)));
+                    var phase_b = Math.Cos((Math.PI / 2.0 * (deg + offset)));
+                    stepTable.Add(new MotorCoil(phase_a, phase_b));
+                }
+            }
+            for (int i = 0; i < steps * 4; i++)
+            {
+                Debug.WriteLine(string.Format("{0} {1:0.00} {2:0.00}", i, stepTable[i].Ia, stepTable[i].Ib));
+            }
+
+            return stepTable.ToArray();
+        }
 
         private double _powerLevel = 1;           // Set to 1.0 to drive the stepper motor at full power/torque
+        /// <summary>
+        /// Gets or sets the power level of this stepper motor.
+        /// </summary>
+        /// <value>
+        /// A power scaling factor from 0.0 to 1.0.
+        /// </value>
+        /// <remarks>
+        /// A changing in power factor will be applied to subsequent motor steps.
+        /// </remarks>
+        public double PowerFactor
+        {
+            get
+            {
+                return _powerLevel;
+            }
+
+            set
+            {
+                _powerLevel = value;
+            }
+        }
 
         private Windows.Devices.Pwm.PwmPin _PWMA;
         private Windows.Devices.Pwm.PwmPin _PWMB;
@@ -50,14 +138,12 @@ namespace Adafruit.IoT.Motors
         private Windows.Devices.Pwm.PwmPin _BIN2;
 
         private Windows.Devices.Pwm.PwmController _controller;
-        private int _steps_per_rev;
+        private double _steps_per_rev;
         private double _sec_per_step;
+        private long _ticks_per_step;
         private int _currentstep;
         private int[] _currentcoils = { 0, 0, 0, 0 };
         private Windows.Devices.Pwm.PwmPin[] _coilpins;
-
-        SteppingStyle _stepStyle;
-        private MotorState _stepAsyncState;
 
         /// <summary>
         /// Initializes a new <see cref="PwmStepperMotor"/> instance.
@@ -65,8 +151,8 @@ namespace Adafruit.IoT.Motors
         /// <param name="controller">The <see cref="Windows.Devices.Pwm.PwmController"/> to use.</param>
         /// <param name="driverA">The motor driver channel (1 through 4) for coil A.</param>
         /// <param name="driverB">The motor driver channel (1 through 4) for coil B.</param>
-        /// <param name="steps">The number of full steps per revolution that this motor has.</param>
-        internal PwmStepperMotor(Windows.Devices.Pwm.PwmController controller, byte driverA, byte driverB, byte steps)
+        /// <param name="stepsPerRev">The number of full steps per revolution that this motor has.</param>
+        internal PwmStepperMotor(Windows.Devices.Pwm.PwmController controller, byte driverA, byte driverB, double stepsPerRev)
         {
             if ((driverA < 1) || (driverA > 4))
                 throw new MotorHatException("Stepper motor driverA must be between 1 and 4.");
@@ -76,15 +162,11 @@ namespace Adafruit.IoT.Motors
                 throw new MotorHatException("Stepper motor driverA and driverB must be different.");
 
             this._controller = controller;
-            this._steps_per_rev = steps;
+            this._steps_per_rev = stepsPerRev;
+
+            // Default values
             this._sec_per_step = 0.1;
             this._currentstep = 0;
-
-            this._MICROSTEPS = 8;
-            var m = new List<double>();
-            for (int i = 0; i <= _MICROSTEPS; i++)
-                m.Add(Math.Sin(Math.PI / 180 * 90 * i / this._MICROSTEPS));
-            this._MICROSTEP_CURVE = m.ToArray();
 
             int pwmapin, ain1pin, ain2pin;
             int pwmbpin, bin1pin, bin2pin;
@@ -140,11 +222,11 @@ namespace Adafruit.IoT.Motors
                     throw new InvalidOperationException();
             }
             this._PWMA = this._controller.OpenPin(pwmapin);
-            this._AIN2 = this._controller.OpenPin(ain2pin);
             this._AIN1 = this._controller.OpenPin(ain1pin);
+            this._AIN2 = this._controller.OpenPin(ain2pin);
             this._PWMB = this._controller.OpenPin(pwmbpin);
-            this._BIN2 = this._controller.OpenPin(bin2pin);
             this._BIN1 = this._controller.OpenPin(bin1pin);
+            this._BIN2 = this._controller.OpenPin(bin2pin);
             this._PWMA.Start();
             this._PWMB.Start();
             this._AIN1.Start();
@@ -170,6 +252,90 @@ namespace Adafruit.IoT.Motors
         public void SetSpeed(double rpm)
         {
             this._sec_per_step = 60.0 / rpm / _steps_per_rev;
+            this._ticks_per_step = (long)(this._sec_per_step * Stopwatch.Frequency);
+            Debug.WriteLine("StopWatch is " + (Stopwatch.IsHighResolution ? "" : "not ") + "high resolution");
+            Debug.WriteLine("\tStopWatch frequency is {0} ticks per second", Stopwatch.Frequency);
+            Debug.WriteLine("\t60 sec/min * {0} RPM / {1} steps/rev = {2} sec/step", rpm, _steps_per_rev, _sec_per_step);
+            Debug.WriteLine("\t{0} sec/step * {1} ticks/sec = {2} ticks/step", _sec_per_step, Stopwatch.Frequency, _ticks_per_step);
+        }
+
+        /// <summary>
+        /// Steps the motor one step in the direction and style specified.
+        /// </summary>
+        /// <param name="direction">A <see cref="Direction"/>.</param>
+        /// <returns>The current step number.</returns>
+        /// <remarks>
+        /// .
+        /// </remarks>
+        public int OneStep(Direction direction)
+        {
+            double pwm_a, pwm_b;
+            int sign_a, sign_b;
+
+            pwm_a = pwm_b = 1;
+
+            this._currentstep += 1;
+            this._currentstep %= _stepTable.Length;
+
+            pwm_a = Math.Abs(_stepTable[this._currentstep].Ia);
+            pwm_b = Math.Abs(_stepTable[this._currentstep].Ib);
+            sign_a = Math.Sign(_stepTable[this._currentstep].Ia);
+            sign_b = Math.Sign(_stepTable[this._currentstep].Ib);
+
+            // only change the pwm duty cycle if this step is a different duty cycle
+            if (pwm_a != _last_pwm_a)
+            {
+                this._PWMA.SetActiveDutyCyclePercentage(Math.Abs(pwm_a * this.PowerFactor));
+            }
+            if (pwm_b != _last_pwm_b)
+            {
+                this._PWMB.SetActiveDutyCyclePercentage(Math.Abs(pwm_b * this.PowerFactor));
+            }
+
+            if (sign_b != _last_sign_b)
+            {
+                // Turn off first
+                if (this._BIN2.GetActiveDutyCyclePercentage() != 0.0f)
+                    this._BIN2.SetActiveDutyCyclePercentage(0);
+                if (this._BIN1.GetActiveDutyCyclePercentage() != 0.0f)
+                    this._BIN1.SetActiveDutyCyclePercentage(0);
+                // turn on
+                if (sign_b > 0)
+                {
+                    if (this._BIN1.GetActiveDutyCyclePercentage() != 1.0f)
+                        this._BIN1.SetActiveDutyCyclePercentage(1.0);
+                }
+                else
+                {
+                    if (this._BIN2.GetActiveDutyCyclePercentage() != 1.0f)
+                        this._BIN2.SetActiveDutyCyclePercentage(1.0);
+                }
+            }
+            if (sign_a != _last_sign_a)
+            {
+                // Turn off first
+                if (this._AIN1.GetActiveDutyCyclePercentage() != 0.0f)
+                    this._AIN1.SetActiveDutyCyclePercentage(0);
+                if (this._AIN2.GetActiveDutyCyclePercentage() != 0.0f)
+                    this._AIN2.SetActiveDutyCyclePercentage(0);
+                // turn on
+                if (sign_a > 0)
+                {
+                    if (this._AIN1.GetActiveDutyCyclePercentage() != 1.0f)
+                        this._AIN1.SetActiveDutyCyclePercentage(1.0);
+                }
+                else
+                {
+                    if (this._AIN2.GetActiveDutyCyclePercentage() != 1.0f)
+                        this._AIN2.SetActiveDutyCyclePercentage(1.0);
+                }
+            }
+            _last_pwm_a = pwm_a;
+            _last_pwm_b = pwm_b;
+            _last_sign_a = sign_a;
+            _last_sign_b = sign_b;
+
+            return this._currentstep;
         }
 
         /// <summary>
@@ -181,152 +347,11 @@ namespace Adafruit.IoT.Motors
         /// <remarks>
         /// .
         /// </remarks>
+        [Obsolete("Use SetStepStyle(SteppingStyle); OneStep(Direction); instead.")]
         public int OneStep(Direction direction, SteppingStyle stepStyle)
         {
-            double pwm_a, pwm_b;
-            int[] coils;
-            _stepStyle = stepStyle;
-
-            pwm_a = pwm_b = 1;
-
-            // first determine what sort of stepping procedure we're up to
-            if (stepStyle == SteppingStyle.Full)
-            {
-                if (((this._currentstep / (this._MICROSTEPS / 2)) % 2) == 0)
-                {
-                    // we're at an even step, weird
-                    if (direction == Direction.Forward)
-                        this._currentstep += this._MICROSTEPS / 2;
-                    else
-                        this._currentstep -= this._MICROSTEPS / 2;
-                }
-                else
-                {
-                    // go to next odd step
-                    if (direction == Direction.Forward)
-                        this._currentstep += this._MICROSTEPS;
-                    else
-                        this._currentstep -= this._MICROSTEPS;
-                }
-            }
-            if (stepStyle == SteppingStyle.Wave)
-            {
-                if (((this._currentstep / (this._MICROSTEPS / 2)) % 2) == 1)
-                {
-                    // we're at an odd step, weird
-                    if (direction == Direction.Forward)
-                        this._currentstep += this._MICROSTEPS / 2;
-                    else
-                        this._currentstep -= this._MICROSTEPS / 2;
-                }
-                else
-                {
-                    // go to next even step
-                    if (direction == Direction.Forward)
-                        this._currentstep += this._MICROSTEPS;
-                    else
-                        this._currentstep -= this._MICROSTEPS;
-                }
-            }
-            else if (stepStyle == SteppingStyle.Half)
-            {
-                if (direction == Direction.Forward)
-                    this._currentstep += this._MICROSTEPS / 2;
-                else
-                    this._currentstep -= this._MICROSTEPS / 2;
-            }
-            else if (stepStyle == SteppingStyle.Microstep8)
-            {
-                if (direction == Direction.Forward)
-                    this._currentstep += 1;
-                else
-                    this._currentstep -= 1;
-
-                // go to next 'step' and wrap around
-                this._currentstep += this._MICROSTEPS * 4;
-                this._currentstep %= this._MICROSTEPS * 4;
-
-                pwm_a = pwm_b = 0;
-                if ((this._currentstep >= 0) && (this._currentstep < this._MICROSTEPS))
-                {
-                    pwm_a = this._MICROSTEP_CURVE[this._MICROSTEPS - this._currentstep];
-                    pwm_b = this._MICROSTEP_CURVE[this._currentstep];
-                }
-                else if ((this._currentstep >= this._MICROSTEPS) && (this._currentstep < this._MICROSTEPS * 2))
-                {
-                    pwm_a = this._MICROSTEP_CURVE[this._currentstep - this._MICROSTEPS];
-                    pwm_b = this._MICROSTEP_CURVE[this._MICROSTEPS * 2 - this._currentstep];
-                }
-                else if ((this._currentstep >= this._MICROSTEPS * 2) && (this._currentstep < this._MICROSTEPS * 3))
-                {
-                    pwm_a = this._MICROSTEP_CURVE[this._MICROSTEPS * 3 - this._currentstep];
-                    pwm_b = this._MICROSTEP_CURVE[this._currentstep - this._MICROSTEPS * 2];
-                }
-                else if ((this._currentstep >= this._MICROSTEPS * 3) && (this._currentstep < this._MICROSTEPS * 4))
-                {
-                    pwm_a = this._MICROSTEP_CURVE[this._currentstep - this._MICROSTEPS * 3];
-                    pwm_b = this._MICROSTEP_CURVE[this._MICROSTEPS * 4 - this._currentstep];
-                }
-            }
-
-            // go to next 'step' and wrap around
-            this._currentstep += this._MICROSTEPS * 4;
-            this._currentstep %= this._MICROSTEPS * 4;
-
-            // only really used for micro stepping, otherwise always on!
-            this._PWMA.SetActiveDutyCyclePercentage(pwm_a * this.PowerFactor);
-            this._PWMB.SetActiveDutyCyclePercentage(pwm_b * this.PowerFactor);
-
-            // set up coil energizing!
-            coils = new int[] { 0, 0, 0, 0 };
-
-            if (stepStyle == SteppingStyle.Microstep8)
-            {
-                if ((this._currentstep >= 0) && (this._currentstep < this._MICROSTEPS))
-                    coils = new int[] { 1, 1, 0, 0 };
-                else if ((this._currentstep >= this._MICROSTEPS) && (this._currentstep < this._MICROSTEPS * 2))
-                    coils = new int[] { 0, 1, 1, 0 };
-                else if ((this._currentstep >= this._MICROSTEPS * 2) && (this._currentstep < this._MICROSTEPS * 3))
-                    coils = new int[] { 0, 0, 1, 1 };
-                else if ((this._currentstep >= this._MICROSTEPS * 3) && (this._currentstep < this._MICROSTEPS * 4))
-                    coils = new int[] { 1, 0, 0, 1 };
-            }
-            else
-            {
-                int[][] step2coils = new int[][] {
-                    new int[] { 1, 0, 0, 0 },
-                    new int[] { 1, 1, 0, 0 },
-                    new int[] { 0, 1, 0, 0 },
-                    new int[] { 0, 1, 1, 0 },
-                    new int[] { 0, 0, 1, 0 },
-                    new int[] { 0, 0, 1, 1 },
-                    new int[] { 0, 0, 0, 1 },
-                    new int[] { 1, 0, 0, 1 }
-                };
-                coils = step2coils[this._currentstep / (this._MICROSTEPS / 2)];
-            }
-
-            // Turn on any coils that are off and need to be turned on
-            for (int i = 0; i < 4; i++)
-            {
-                if ((coils[i] == 1) && (_currentcoils[i] == 0))
-                {
-                    _coilpins[i].SetActiveDutyCyclePercentage(1.0);
-                }
-            }
-
-            // Turn off any coils that are on and need to be turned off
-            for (int i = 0; i < 4; i++)
-            {
-                if ((coils[i] == 0) && (_currentcoils[i] == 1))
-                {
-                    _coilpins[i].SetActiveDutyCyclePercentage(0);
-                }
-            }
-
-            //Debug.WriteLine("coils({0}, {1}, {2}, {3}) pwm({4}, {5})", coils[0], coils[1], coils[2], coils[3], pwm_a, pwm_b);
-            _currentcoils = coils;
-            return this._currentstep;
+            SetStepStyle(stepStyle);
+            return OneStep(direction);
         }
 
         /// <summary>
@@ -334,19 +359,18 @@ namespace Adafruit.IoT.Motors
         /// </summary>
         /// <param name="steps">The number of steps to process.</param>
         /// <param name="direction">A <see cref="Direction"/>.</param>
-        /// <param name="stepStyle">A <see cref="SteppingStyle"/>.</param>
         /// <remarks>
         /// StepAsync cannot be called if the motor is already running.
         /// </remarks>
-        public IAsyncAction StepAsync(int steps, Direction direction, SteppingStyle stepStyle)
+        public IAsyncAction StepAsync(double steps, Direction direction)
         {
             if (_stepAsyncState == MotorState.Run)
                 throw new InvalidOperationException("Stepper motor is already running.");
 
             cts = new CancellationTokenSource();
-            _stepStyle = stepStyle;
+            //Task t = new Task(() => { }, cts.Token, TaskCreationOptions.None);            
             WorkItemHandler loop = new WorkItemHandler((IAsyncAction) =>
-                motorThread(steps, direction, stepStyle, cts.Token)
+                motorThread(steps, direction, cts.Token)
             );
             _runTask = ThreadPool.RunAsync(loop, WorkItemPriority.High);
             return _runTask;
@@ -359,63 +383,67 @@ namespace Adafruit.IoT.Motors
         /// </summary>
         /// <param name="steps">The number of steps to step the motor.</param>
         /// <param name="direction">A <see cref="Direction"/>.</param>
-        /// <param name="stepStyle">A <see cref="SteppingStyle"/>.</param>
         /// <param name="ct">A <see cref="CancellationToken"/>.</param>
         /// <returns>The current step number.</returns>
         /// <remarks>
         /// The speed at which the steps will occur will be at the best effort to achieve the desired <see cref="SetSpeed(double)"/> speed.
         /// </remarks>
-        internal void motorThread(int steps, Direction direction, SteppingStyle stepStyle, CancellationToken ct)
+        internal void motorThread(double steps, Direction direction, CancellationToken ct)
         {
             _stepAsyncState = MotorState.Run;
-            double s_per_s;
-            int _steps = steps;
+            long ticks_per_step = this._ticks_per_step;
+            double _steps = steps;
             int lateststep = 0;
 
-            var watch = System.Diagnostics.Stopwatch.StartNew();
+            var watch = new System.Diagnostics.Stopwatch();
 
-            s_per_s = this._sec_per_step;
-            if (stepStyle == SteppingStyle.Half)
+            switch (_stepStyle)
             {
-                s_per_s /= 2.0;
-                _steps *= 2;
+                case SteppingStyle.Full:
+                case SteppingStyle.FullWave:
+                    break;
+                case SteppingStyle.Half:
+                case SteppingStyle.HalfWave:
+                    ticks_per_step /= 2;
+                    _steps *= 2;
+                    break;
+                case SteppingStyle.Microstep4:
+                    ticks_per_step /= 4;
+                    _steps *= 4;
+                    break;
+                case SteppingStyle.Microstep8:
+                    ticks_per_step /= 8;
+                    _steps *= 8;
+                    break;
+                case SteppingStyle.Microstep16:
+                    ticks_per_step /= 16;
+                    _steps *= 16;
+                    break;
+                case SteppingStyle.Microstep32:
+                    ticks_per_step /= 32;
+                    _steps *= 32;
+                    break;
             }
-            if (stepStyle == SteppingStyle.Microstep8)
-            {
-                s_per_s /= this._MICROSTEPS;
-                _steps *= this._MICROSTEPS;
-            }
-            long ticksperstep = (long)(s_per_s * Stopwatch.Frequency);
             long nexttime = 0;
             int s = 0;
             try
             {
+                watch.Start();
                 while ((s < _steps) || (steps == -1))
                 {
+                    lateststep = this.OneStep(direction);
                     if (ct.IsCancellationRequested) break;
-                    lateststep = this.OneStep(direction, stepStyle);
                     if (_steps != -1) s++;
-                    nexttime += ticksperstep;
+                    nexttime += ticks_per_step;
                     while (watch.ElapsedTicks < nexttime)
-                    {
-                        if (ct.IsCancellationRequested) break;
-                    }
+                    { }
                 }
             }
             catch (TaskCanceledException)
-            { }
+            {
+            }
             finally
             {
-                if (stepStyle == SteppingStyle.Microstep8)
-                {
-                    // Always end in full step
-                    while ((lateststep != 0) && (lateststep != this._MICROSTEPS))
-                    {
-                        lateststep = this.OneStep(direction, stepStyle);
-                        nexttime += ticksperstep;
-                        while (watch.ElapsedTicks < nexttime) { }
-                    }
-                }
             }
             _stepAsyncState = MotorState.Brake;
         }
@@ -437,10 +465,9 @@ namespace Adafruit.IoT.Motors
         /// <param name="stepStyle">A <see cref="SteppingStyle"/>.</param>
         public void SetStepStyle(SteppingStyle stepStyle)
         {
-            _stepStyle = stepStyle;
+            this._stepStyle = stepStyle;
+            this._stepTable = BuildStepTable(stepStyle);
         }
-
-        IAsyncAction _runTask;
 
         /// <inheritdoc/>
         public void Run(Direction direction)
@@ -448,8 +475,8 @@ namespace Adafruit.IoT.Motors
             Microsoft.IoT.DeviceHelpers.TaskExtensions.UISafeWait(cancelRun);
 
             // Do not await, this should continue running
-            Task.Run(() => StepAsync(-1, direction, _stepStyle))
-                .ContinueWith(t => { throw t.Exception; }, 
+            Task.Run(() => StepAsync(-1, direction))
+                .ContinueWith(t => { throw t.Exception; },
                 TaskContinuationOptions.OnlyOnFaulted);
         }
 
@@ -488,28 +515,6 @@ namespace Adafruit.IoT.Motors
         #region IDisposable Support
         private bool disposedValue = false; // To detect redundant calls
 
-        /// <summary>
-        /// Gets or sets the power level of this stepper motor.
-        /// </summary>
-        /// <value>
-        /// A power scaling factor from 0.0 to 1.0.
-        /// </value>
-        /// <remarks>
-        /// A changing in power factor will be applied to subsequent motor steps.
-        /// </remarks>
-        public double PowerFactor
-        {
-            get
-            {
-                return _powerLevel;
-            }
-
-            set
-            {
-                _powerLevel = value;
-            }
-        }
-
         /// <inheritdoc/>
         void Dispose(bool disposing)
         {
@@ -518,42 +523,12 @@ namespace Adafruit.IoT.Motors
                 if (disposing)
                 {
                     // Dispose the opened pins so that they are released
-                    if (this._PWMA != null)
-                    {
-                        if (this._PWMA.IsStarted) this._PWMA.Stop();
-                        this._PWMA.Dispose();
-                        this._PWMA = null;
-                    }
-                    if (this._PWMB != null)
-                    {
-                        if (this._PWMB.IsStarted) this._PWMB.Stop();
-                        this._PWMB.Dispose();
-                        this._PWMB = null;
-                    }
-                    if (this._AIN1 != null)
-                    {
-                        if (this._AIN1.IsStarted) this._AIN1.Stop();
-                        this._AIN1.Dispose();
-                        this._AIN1 = null;
-                    }
-                    if (this._AIN2 != null)
-                    {
-                        if (this._AIN2.IsStarted) this._AIN2.Stop();
-                        this._AIN2.Dispose();
-                        this._AIN2 = null;
-                    }
-                    if (this._BIN1 != null)
-                    {
-                        if (this._BIN1.IsStarted) this._BIN1.Stop();
-                        this._BIN1.Dispose();
-                        this._BIN1 = null;
-                    }
-                    if (this._BIN2 != null)
-                    {
-                        if (this._BIN2.IsStarted) this._BIN2.Stop();
-                        this._BIN2.Dispose();
-                        this._BIN2 = null;
-                    }
+                    DisposePin(ref this._PWMA);
+                    DisposePin(ref this._PWMB);
+                    DisposePin(ref this._AIN1);
+                    DisposePin(ref this._AIN2);
+                    DisposePin(ref this._BIN1);
+                    DisposePin(ref this._BIN2);
                 }
                 disposedValue = true;
             }
@@ -563,6 +538,16 @@ namespace Adafruit.IoT.Motors
         public void Dispose()
         {
             Dispose(true);
+        }
+
+        private void DisposePin(ref Windows.Devices.Pwm.PwmPin p)
+        {
+            if (p != null)
+            {
+                if (p.IsStarted) p.Stop();
+                p.Dispose();
+                p = null;
+            }
         }
         #endregion
     }

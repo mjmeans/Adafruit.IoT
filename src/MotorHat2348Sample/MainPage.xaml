@@ -16,7 +16,9 @@
                         <LineBreak/>
                         stepper (channels 0,1)
                         <LineBreak/>
-                        200 steps forward
+                        One complete revolution
+                        <LineBreak/>
+                        Free running x2, then set to 3 RPM
                     </TextBlock>
                 </Button>
                 <TextBlock x:Name="textBlock" HorizontalAlignment="Left" Text="Actual speed = {0} rpm" TextWrapping="Wrap" VerticalAlignment="Top"/>

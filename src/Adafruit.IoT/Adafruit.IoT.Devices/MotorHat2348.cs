@@ -43,7 +43,8 @@ namespace Adafruit.IoT.Devices
     ///
     ///            // step 200 full steps in the forward direction using half stepping (so 400 steps total) at 30 rpm
     ///            stepper.SetSpeed(30);
-    ///            await stepper.StepAsync(200, Direction.Forward, SteppingStyle.Half);
+    ///            stepper.SetStepStyle(SteppingStyle.Half);
+    ///            await stepper.StepAsync(200, Direction.Forward);
     ///
     ///            // Activate the pin and set it to 50% duty cycle
     ///            pwm.SetActiveDutyCyclePercentage(0.5);
@@ -165,13 +166,13 @@ namespace Adafruit.IoT.Devices
         /// </summary>
         /// <param name="driverChannelA">A motor driver channel from 1 to 4.</param>
         /// <param name="driverChannelB">A motor driver channel from 1 to 4.</param>
-        /// <param name="steps">The number of full steps per revolution that this motor has.</param>
+        /// <param name="stepsPerRev">The number of full steps per revolution that this motor has.</param>
         /// <returns>The created <see cref="PwmStepperMotor"/> object.</returns>
         /// <remarks>
         /// The driverChannelA and driverChannelB parameters must be different and must be channels not already assigned to other 
         /// <see cref="PwmDCMotor"/> or <see cref="PwmStepperMotor"/> objects for this <see cref="MotorHat2348"/>.
         /// </remarks>
-        public PwmStepperMotor CreateStepperMotor(byte driverChannelA, byte driverChannelB, byte steps)
+        public PwmStepperMotor CreateStepperMotor(byte driverChannelA, byte driverChannelB, double stepsPerRev)
         {
             PwmStepperMotor value;
 
@@ -187,7 +188,7 @@ namespace Adafruit.IoT.Devices
                 throw new MotorHatException(string.Format("Channel {0} is already assigned.", driverChannelB));
             Microsoft.IoT.DeviceHelpers.TaskExtensions.UISafeWait(EnsureInitializedAsync);
 
-            value = new PwmStepperMotor(this._pwm, driverChannelA, driverChannelB, steps);
+            value = new PwmStepperMotor(this._pwm, driverChannelA, driverChannelB, stepsPerRev);
             motorChannelsUsed[driverChannelA - 1] = true;
             motorChannelsUsed[driverChannelB - 1] = true;
             motors.Add(value);

@@ -270,15 +270,6 @@ namespace Adafruit.IoT.Devices.Pwm
 
             // Set ActualFrequency to default(200Hz)
             actualFrequency = Math.Round((CLOCK_FREQUENCY) / (double)((preScale + 1) * PULSE_RESOLUTION));
-
-            //// Turn them all on - Why are we turning them all on. Seems like we should be turning them off.
-            //writeBuf[0] = (byte)Registers.ALL_LED_OFF_H;
-            //writeBuf[1] = 0;
-            //primaryDevice.Write(writeBuf);
-            //writeBuf[0] = (byte)Registers.ALL_LED_ON_H;
-            //writeBuf[1] = (1 << 4);             // 0x10 = LED FULL ON
-            //primaryDevice.Write(writeBuf);
-
             await RestartControllerAsync((byte)(Mode1Flags.RESTART | Mode1Flags.AI | Mode1Flags.ALLCALL));
         }
 

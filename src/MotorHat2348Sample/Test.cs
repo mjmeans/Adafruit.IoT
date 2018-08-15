@@ -27,7 +27,8 @@ namespace Adafruit.IoT
 
             // step 200 full steps in the forward direction using half stepping (so 400 steps total) at 30 rpm
             stepper.SetSpeed(30);
-            await stepper.StepAsync(200, Direction.Forward, SteppingStyle.Half);
+            stepper.SetStepStyle(SteppingStyle.Half);
+            await stepper.StepAsync(200, Direction.Forward);
 
             // Activate the pin and set it to 50% duty cycle
             pwm.Start();
