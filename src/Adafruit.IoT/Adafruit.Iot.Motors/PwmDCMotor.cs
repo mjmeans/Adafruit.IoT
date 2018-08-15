@@ -134,6 +134,20 @@ namespace Adafruit.IoT.Motors
             this._PWMpin.SetActiveDutyCyclePercentage(0);
         }
 
+        /// <summary>
+        /// Stop the motor using the short-brake feature of the chip
+        /// </summary>
+        /// <remarks>
+        /// Short-brake is when motor wires are shorted together, thus causing an electrical feedback acting as a brake.
+        /// </remarks>
+        public void Brake()
+        {
+            this._IN1pin.Start();
+            this._IN2pin.Start();
+            this._IN1pin.SetActiveDutyCyclePercentage(1.0);
+            this._IN2pin.SetActiveDutyCyclePercentage(1.0);
+        }
+
         #region IDisposable Support
         private bool disposedValue = false; // To detect redundant calls
 

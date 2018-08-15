@@ -20,10 +20,11 @@ namespace Adafruit.IoT.Motors
         /// </summary>
         Run = 1,
         /// <summary>
-        /// The motor is stopped but energized, holding position like a brake
+        /// The motor is stopped and a brake effect is applied.
         /// </summary>
         /// <remarks>
-        /// This state is only valid for stepper motors.
+        /// <para>For DC motors the brake effect is a short-brake that causes the brake motor wires to be shorted together, thus causing a braking effect.</para>
+        /// <para>For stepper motors, the motor is stopped but the coils are left energized.</para>
         /// </remarks>
         Brake = 2
     }

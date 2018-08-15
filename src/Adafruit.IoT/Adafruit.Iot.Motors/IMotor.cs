@@ -24,8 +24,13 @@
         void Run(Direction direction);
 
         /// <summary>
-        /// Stop the motor and cut its power.
+        /// Stop the motor and cut its power. Inertia may permit the motor to continue rotating.
         /// </summary>
         void Stop();
+
+        /// <summary>
+        /// Stop the motor and apply a brake.
+        /// </summary>
+        void Brake();
     }
 }
