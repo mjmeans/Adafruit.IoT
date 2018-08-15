@@ -7,7 +7,7 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>43164d57-9b17-49a2-a931-3a971a8d6a8a</ProjectGuid>
-    <SHFBSchemaVersion>2015.6.5.0</SHFBSchemaVersion>
+    <SHFBSchemaVersion>2017.9.26.0</SHFBSchemaVersion>
     <!-- AssemblyName, Name, and RootNamespace are not used by SHFB but Visual Studio adds them anyway -->
     <AssemblyName>DevicesDoc</AssemblyName>
     <RootNamespace>DevicesDoc</RootNamespace>
@@ -51,7 +51,7 @@
     <HtmlSdkLinkType>Msdn</HtmlSdkLinkType>
     <IncludeFavorites>False</IncludeFavorites>
     <BinaryTOC>False</BinaryTOC>
-    <VisibleItems>InheritedMembers, InheritedFrameworkMembers, Protected, ProtectedInternalAsProtected</VisibleItems>
+    <VisibleItems>InheritedMembers, InheritedFrameworkMembers, Protected, ProtectedInternalAsProtected, EditorBrowsableNever, NonBrowsable</VisibleItems>
     <NamespaceSummaries>
       <NamespaceSummaryItem name="Adafruit.IoT.Devices" isDocumented="True" xmlns="">The Adafruit.IoT.Devices namespace contains types that support various Adafruit devices for Windows 10 IoT Core.</NamespaceSummaryItem>
       <NamespaceSummaryItem name="Adafruit.IoT.Motors" isDocumented="True" xmlns="">The Adafruit.IoT.Devices namespace contains types that support various motors when attached to Adafruit devices under Windows 10 IoT Core.</NamespaceSummaryItem>

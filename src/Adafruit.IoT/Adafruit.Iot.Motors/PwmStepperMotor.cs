@@ -15,11 +15,6 @@ namespace Adafruit.IoT.Motors
     /// Represents a stepper motor connected to a PWM controller.
     /// </summary>
     /// <remarks>
-    /// This class supports <see cref="SteppingStyle"/> settings
-    /// <see cref="SteppingStyle.Full"/>, <see cref="SteppingStyle.Half"/>,
-    /// <see cref="SteppingStyle.FullWave"/>, <see cref="SteppingStyle.HalfWave"/>,
-    /// <see cref="SteppingStyle.Microstep4"/>, <see cref="SteppingStyle.Microstep8"/>,
-    /// <see cref="SteppingStyle.Microstep16"/> and <see cref="SteppingStyle.Microstep32"/>.
     /// </remarks>
     public sealed class PwmStepperMotor : IMotor, IDisposable
     {
@@ -29,6 +24,7 @@ namespace Adafruit.IoT.Motors
         private double _last_pwm_a, _last_pwm_b;
         private int _last_sign_a, _last_sign_b;
         private IAsyncAction _runTask;
+        CancellationTokenSource _cts;
 
         private class MotorCoil
         {
@@ -40,7 +36,7 @@ namespace Adafruit.IoT.Motors
             }
         }
 
-        // Various step tables are documetned here http://www.lamja.com/?p=140
+        // Various step tables are documented here http://www.lamja.com/?p=140
         private MotorCoil[] BuildStepTable(SteppingStyle stepStyle)
         {
             int steps = 0;
@@ -107,7 +103,6 @@ namespace Adafruit.IoT.Motors
             return stepTable.ToArray();
         }
 
-        private double _powerLevel = 1;           // Set to 1.0 to drive the stepper motor at full power/torque
         /// <summary>
         /// Gets or sets the power level of this stepper motor.
         /// </summary>
@@ -117,18 +112,7 @@ namespace Adafruit.IoT.Motors
         /// <remarks>
         /// A changing in power factor will be applied to subsequent motor steps.
         /// </remarks>
-        public double PowerFactor
-        {
-            get
-            {
-                return _powerLevel;
-            }
-
-            set
-            {
-                _powerLevel = value;
-            }
-        }
+        public double PowerFactor { get; set; } = 1;
 
         private Windows.Devices.Pwm.PwmPin _PWMA;
         private Windows.Devices.Pwm.PwmPin _PWMB;
@@ -143,7 +127,6 @@ namespace Adafruit.IoT.Motors
         private long _ticks_per_step;
         private int _currentstep;
         private int[] _currentcoils = { 0, 0, 0, 0 };
-        private Windows.Devices.Pwm.PwmPin[] _coilpins;
 
         /// <summary>
         /// Initializes a new <see cref="PwmStepperMotor"/> instance.
@@ -233,13 +216,6 @@ namespace Adafruit.IoT.Motors
             this._AIN2.Start();
             this._BIN1.Start();
             this._BIN2.Start();
-            _coilpins = new Windows.Devices.Pwm.PwmPin[]
-            {
-                this._AIN2,
-                this._BIN1,
-                this._AIN1,
-                this._BIN2
-            };
         }
 
         /// <summary>
@@ -260,12 +236,11 @@ namespace Adafruit.IoT.Motors
         }
 
         /// <summary>
-        /// Steps the motor one step in the direction and style specified.
+        /// Steps the motor one step in the direction specified.
         /// </summary>
         /// <param name="direction">A <see cref="Direction"/>.</param>
         /// <returns>The current step number.</returns>
         /// <remarks>
-        /// .
         /// </remarks>
         public int OneStep(Direction direction)
         {
@@ -345,7 +320,6 @@ namespace Adafruit.IoT.Motors
         /// <param name="stepStyle">A <see cref="SteppingStyle"/>.</param>
         /// <returns>The current step number.</returns>
         /// <remarks>
-        /// .
         /// </remarks>
         [Obsolete("Use SetStepStyle(SteppingStyle); OneStep(Direction); instead.")]
         public int OneStep(Direction direction, SteppingStyle stepStyle)
@@ -355,7 +329,7 @@ namespace Adafruit.IoT.Motors
         }
 
         /// <summary>
-        /// Steps a specified number of steps, direction and stepping style.
+        /// Steps a specified number of steps and direction.
         /// </summary>
         /// <param name="steps">The number of steps to process.</param>
         /// <param name="direction">A <see cref="Direction"/>.</param>
@@ -367,16 +341,14 @@ namespace Adafruit.IoT.Motors
             if (_stepAsyncState == MotorState.Run)
                 throw new InvalidOperationException("Stepper motor is already running.");
 
-            cts = new CancellationTokenSource();
+            _cts = new CancellationTokenSource();
             //Task t = new Task(() => { }, cts.Token, TaskCreationOptions.None);            
             WorkItemHandler loop = new WorkItemHandler((IAsyncAction) =>
-                motorThread(steps, direction, cts.Token)
+                motorThread(steps, direction, _cts.Token)
             );
             _runTask = ThreadPool.RunAsync(loop, WorkItemPriority.High);
             return _runTask;
         }
-
-        CancellationTokenSource cts;
 
         /// <summary>
         /// Async method to step the motor multiple steps.
@@ -449,7 +421,7 @@ namespace Adafruit.IoT.Motors
         }
 
         /// <summary>
-        /// The current <see cref="MotorState"/>.
+        /// Gets the current <see cref="MotorState"/>.
         /// </summary>
         public MotorState StepAsyncState
         {
@@ -492,23 +464,23 @@ namespace Adafruit.IoT.Motors
         public void Stop()
         {
             Microsoft.IoT.DeviceHelpers.TaskExtensions.UISafeWait(cancelRun);
-            for (int i = 0; i < 4; i++)
-            {
-                _coilpins[i].SetActiveDutyCyclePercentage(0.0);
-            }
+            this._AIN1.SetActiveDutyCyclePercentage(0);
+            this._AIN2.SetActiveDutyCyclePercentage(0);
+            this._BIN1.SetActiveDutyCyclePercentage(0);
+            this._BIN2.SetActiveDutyCyclePercentage(0);
             _stepAsyncState = MotorState.Stop;
         }
 
         private async Task cancelRun()
         {
-            if (cts != null)
+            if (_cts != null)
             {
-                cts.Cancel();
+                _cts.Cancel();
                 await Task.Run(() =>
                 {
                     while (_runTask.Status == AsyncStatus.Started) { };
                 });
-                cts = null;
+                _cts = null;
             }
         }
 
