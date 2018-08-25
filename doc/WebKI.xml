@@ -11,7 +11,11 @@
   <HelpKINode Title="Adafruit.IoT.Motors.SteppingStyle enumeration" Url="html/T_Adafruit_IoT_Motors_SteppingStyle.htm" />
   <HelpKINode Title="Backward enumeration member" Url="html/T_Adafruit_IoT_Motors_Direction.htm" />
   <HelpKINode Title="Brake enumeration member" Url="html/T_Adafruit_IoT_Motors_MotorState.htm" />
-  <HelpKINode Title="Brake method" Url="html/M_Adafruit_IoT_Motors_PwmStepperMotor_Brake.htm" />
+  <HelpKINode Title="Brake method">
+    <HelpKINode Title="IMotor.Brake Method " Url="html/M_Adafruit_IoT_Motors_IMotor_Brake.htm" />
+    <HelpKINode Title="PwmDCMotor.Brake Method " Url="html/M_Adafruit_IoT_Motors_PwmDCMotor_Brake.htm" />
+    <HelpKINode Title="PwmStepperMotor.Brake Method " Url="html/M_Adafruit_IoT_Motors_PwmStepperMotor_Brake.htm" />
+  </HelpKINode>
   <HelpKINode Title="Close method">
     <HelpKINode Title="MotorHat2348.Close Method " Url="html/M_Adafruit_IoT_Devices_MotorHat2348_Close.htm" />
     <HelpKINode Title="PwmDCMotor.Close Method " Url="html/M_Adafruit_IoT_Motors_PwmDCMotor_Close.htm" />
@@ -23,19 +27,23 @@
   <HelpKINode Title="Direction enumeration" Url="html/T_Adafruit_IoT_Motors_Direction.htm" />
   <HelpKINode Title="Forward enumeration member" Url="html/T_Adafruit_IoT_Motors_Direction.htm" />
   <HelpKINode Title="Full enumeration member" Url="html/T_Adafruit_IoT_Motors_SteppingStyle.htm" />
+  <HelpKINode Title="FullWave enumeration member" Url="html/T_Adafruit_IoT_Motors_SteppingStyle.htm" />
   <HelpKINode Title="Half enumeration member" Url="html/T_Adafruit_IoT_Motors_SteppingStyle.htm" />
+  <HelpKINode Title="HalfWave enumeration member" Url="html/T_Adafruit_IoT_Motors_SteppingStyle.htm" />
   <HelpKINode Title="IMotor interface">
     <HelpKINode Title="IMotor Interface" Url="html/T_Adafruit_IoT_Motors_IMotor.htm" />
-    <HelpKINode Title="about IMotor interface" Url="html/T_Adafruit_IoT_Motors_IMotor.htm" />
     <HelpKINode Title="methods" Url="html/Methods_T_Adafruit_IoT_Motors_IMotor.htm" />
   </HelpKINode>
+  <HelpKINode Title="IMotor.Brake method" Url="html/M_Adafruit_IoT_Motors_IMotor_Brake.htm" />
   <HelpKINode Title="IMotor.Run method" Url="html/M_Adafruit_IoT_Motors_IMotor_Run.htm" />
   <HelpKINode Title="IMotor.SetSpeed method" Url="html/M_Adafruit_IoT_Motors_IMotor_SetSpeed.htm" />
   <HelpKINode Title="IMotor.Stop method" Url="html/M_Adafruit_IoT_Motors_IMotor_Stop.htm" />
+  <HelpKINode Title="Microstep16 enumeration member" Url="html/T_Adafruit_IoT_Motors_SteppingStyle.htm" />
+  <HelpKINode Title="Microstep32 enumeration member" Url="html/T_Adafruit_IoT_Motors_SteppingStyle.htm" />
+  <HelpKINode Title="Microstep4 enumeration member" Url="html/T_Adafruit_IoT_Motors_SteppingStyle.htm" />
   <HelpKINode Title="Microstep8 enumeration member" Url="html/T_Adafruit_IoT_Motors_SteppingStyle.htm" />
   <HelpKINode Title="MotorHat2348 class">
     <HelpKINode Title="MotorHat2348 Class" Url="html/T_Adafruit_IoT_Devices_MotorHat2348.htm" />
-    <HelpKINode Title="about MotorHat2348 class" Url="html/T_Adafruit_IoT_Devices_MotorHat2348.htm" />
     <HelpKINode Title="constructor" Url="html/Overload_Adafruit_IoT_Devices_MotorHat2348__ctor.htm" />
     <HelpKINode Title="methods" Url="html/Methods_T_Adafruit_IoT_Devices_MotorHat2348.htm" />
     <HelpKINode Title="properties" Url="html/Properties_T_Adafruit_IoT_Devices_MotorHat2348.htm" />
@@ -49,13 +57,13 @@
   <HelpKINode Title="MotorHat2348.PwmPins property" Url="html/P_Adafruit_IoT_Devices_MotorHat2348_PwmPins.htm" />
   <HelpKINode Title="Motors property" Url="html/P_Adafruit_IoT_Devices_MotorHat2348_Motors.htm" />
   <HelpKINode Title="MotorState enumeration" Url="html/T_Adafruit_IoT_Motors_MotorState.htm" />
-  <HelpKINode Title="OneStep method" Url="html/M_Adafruit_IoT_Motors_PwmStepperMotor_OneStep.htm" />
+  <HelpKINode Title="OneStep method" Url="html/Overload_Adafruit_IoT_Motors_PwmStepperMotor_OneStep.htm" />
   <HelpKINode Title="PowerFactor property" Url="html/P_Adafruit_IoT_Motors_PwmStepperMotor_PowerFactor.htm" />
   <HelpKINode Title="PwmDCMotor class">
     <HelpKINode Title="PwmDCMotor Class" Url="html/T_Adafruit_IoT_Motors_PwmDCMotor.htm" />
-    <HelpKINode Title="about PwmDCMotor class" Url="html/T_Adafruit_IoT_Motors_PwmDCMotor.htm" />
     <HelpKINode Title="methods" Url="html/Methods_T_Adafruit_IoT_Motors_PwmDCMotor.htm" />
   </HelpKINode>
+  <HelpKINode Title="PwmDCMotor.Brake method" Url="html/M_Adafruit_IoT_Motors_PwmDCMotor_Brake.htm" />
   <HelpKINode Title="PwmDCMotor.Close method" Url="html/M_Adafruit_IoT_Motors_PwmDCMotor_Close.htm" />
   <HelpKINode Title="PwmDCMotor.Run method" Url="html/M_Adafruit_IoT_Motors_PwmDCMotor_Run.htm" />
   <HelpKINode Title="PwmDCMotor.SetSpeed method" Url="html/M_Adafruit_IoT_Motors_PwmDCMotor_SetSpeed.htm" />
@@ -63,18 +71,17 @@
   <HelpKINode Title="PwmPins property" Url="html/P_Adafruit_IoT_Devices_MotorHat2348_PwmPins.htm" />
   <HelpKINode Title="PwmStepperMotor class">
     <HelpKINode Title="PwmStepperMotor Class" Url="html/T_Adafruit_IoT_Motors_PwmStepperMotor.htm" />
-    <HelpKINode Title="about PwmStepperMotor class" Url="html/T_Adafruit_IoT_Motors_PwmStepperMotor.htm" />
     <HelpKINode Title="methods" Url="html/Methods_T_Adafruit_IoT_Motors_PwmStepperMotor.htm" />
     <HelpKINode Title="properties" Url="html/Properties_T_Adafruit_IoT_Motors_PwmStepperMotor.htm" />
   </HelpKINode>
   <HelpKINode Title="PwmStepperMotor.Brake method" Url="html/M_Adafruit_IoT_Motors_PwmStepperMotor_Brake.htm" />
   <HelpKINode Title="PwmStepperMotor.Close method" Url="html/M_Adafruit_IoT_Motors_PwmStepperMotor_Close.htm" />
-  <HelpKINode Title="PwmStepperMotor.OneStep method" Url="html/M_Adafruit_IoT_Motors_PwmStepperMotor_OneStep.htm" />
+  <HelpKINode Title="PwmStepperMotor.OneStep method" Url="html/Overload_Adafruit_IoT_Motors_PwmStepperMotor_OneStep.htm" />
   <HelpKINode Title="PwmStepperMotor.PowerFactor property" Url="html/P_Adafruit_IoT_Motors_PwmStepperMotor_PowerFactor.htm" />
   <HelpKINode Title="PwmStepperMotor.Run method" Url="html/M_Adafruit_IoT_Motors_PwmStepperMotor_Run.htm" />
   <HelpKINode Title="PwmStepperMotor.SetSpeed method" Url="html/M_Adafruit_IoT_Motors_PwmStepperMotor_SetSpeed.htm" />
   <HelpKINode Title="PwmStepperMotor.SetStepStyle method" Url="html/M_Adafruit_IoT_Motors_PwmStepperMotor_SetStepStyle.htm" />
-  <HelpKINode Title="PwmStepperMotor.StepAsync method" Url="html/M_Adafruit_IoT_Motors_PwmStepperMotor_StepAsync.htm" />
+  <HelpKINode Title="PwmStepperMotor.StepAsync method" Url="html/Overload_Adafruit_IoT_Motors_PwmStepperMotor_StepAsync.htm" />
   <HelpKINode Title="PwmStepperMotor.StepAsyncState property" Url="html/P_Adafruit_IoT_Motors_PwmStepperMotor_StepAsyncState.htm" />
   <HelpKINode Title="PwmStepperMotor.Stop method" Url="html/M_Adafruit_IoT_Motors_PwmStepperMotor_Stop.htm" />
   <HelpKINode Title="Run enumeration member" Url="html/T_Adafruit_IoT_Motors_MotorState.htm" />
@@ -89,7 +96,7 @@
     <HelpKINode Title="PwmStepperMotor.SetSpeed Method " Url="html/M_Adafruit_IoT_Motors_PwmStepperMotor_SetSpeed.htm" />
   </HelpKINode>
   <HelpKINode Title="SetStepStyle method" Url="html/M_Adafruit_IoT_Motors_PwmStepperMotor_SetStepStyle.htm" />
-  <HelpKINode Title="StepAsync method" Url="html/M_Adafruit_IoT_Motors_PwmStepperMotor_StepAsync.htm" />
+  <HelpKINode Title="StepAsync method" Url="html/Overload_Adafruit_IoT_Motors_PwmStepperMotor_StepAsync.htm" />
   <HelpKINode Title="StepAsyncState property" Url="html/P_Adafruit_IoT_Motors_PwmStepperMotor_StepAsyncState.htm" />
   <HelpKINode Title="SteppingStyle enumeration" Url="html/T_Adafruit_IoT_Motors_SteppingStyle.htm" />
   <HelpKINode Title="Stop enumeration member" Url="html/T_Adafruit_IoT_Motors_MotorState.htm" />
@@ -101,6 +108,5 @@
   <HelpKINode Title="version">
     <HelpKINode Title="history" Url="html/7e4af686-8c97-40c6-a035-af6a5c86781f.htm" />
   </HelpKINode>
-  <HelpKINode Title="Wave enumeration member" Url="html/T_Adafruit_IoT_Motors_SteppingStyle.htm" />
   <HelpKINode Title="Welcome" Url="html/f5033eb9-76f4-4567-921e-7d84815c826d.htm" />
 </HelpKI>
